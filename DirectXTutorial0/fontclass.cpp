@@ -266,3 +266,13 @@ int FontClass::GetFontHeight()
 {
 	return (int)m_fontHeight;
 }
+
+void FontClass::SetFontSize(float newSize)
+{
+	m_fontHeight = newSize;  // 새로운 폰트 크기 적용
+}
+
+float FontClass::GetFontSize()
+{
+	return m_fontHeight;
+}

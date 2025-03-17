@@ -72,23 +72,27 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ExecutablePath>$(SolutionDir)Inc;$(ExecutablePath)</ExecutablePath>
-    <LibraryPath>$(SolutionDir)lib\DirectXTK\x64\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\DirectXTK\x64\Release;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)Inc;$(IncludePath)</IncludePath>
+    <OutDir>.\x64\Release</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ExecutablePath>$(SolutionDir)Inc;$(ExecutablePath)</ExecutablePath>
-    <LibraryPath>$(SolutionDir)lib\DirectXTK\x64\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\DirectXTK\x64\Release;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)Inc;$(IncludePath)</IncludePath>
+    <OutDir>.\x64\Release</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ExecutablePath>$(SolutionDir)Inc;$(ExecutablePath)</ExecutablePath>
-    <LibraryPath>$(SolutionDir)lib\DirectXTK\x64\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\DirectXTK\x64\Release;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)Inc;$(IncludePath)</IncludePath>
+    <OutDir>.\x64\Release</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ExecutablePath>$(SolutionDir)Inc;$(ExecutablePath)</ExecutablePath>
-    <LibraryPath>$(SolutionDir)lib\DirectXTK\x64\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\DirectXTK\x64\Release;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)Inc;$(IncludePath)</IncludePath>
+    <OutDir>.\x64\Release</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -161,11 +165,8 @@
     <ClInclude Include="lightclass.h" />
     <ClInclude Include="lightshaderclass.h" />
     <ClInclude Include="modelclass.h" />
-    <ClInclude Include="paperbitmap.h" />
     <ClInclude Include="playerbitmap.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="rockbitmap.h" />
-    <ClInclude Include="scissorbitmap.h" />
     <ClInclude Include="Systemclass.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="textclass.h" />
@@ -187,10 +188,7 @@
     <ClCompile Include="lightshaderclass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="modelclass.cpp" />
-    <ClCompile Include="paperbitmap.cpp" />
     <ClCompile Include="playerbitmap.cpp" />
-    <ClCompile Include="rockbitmap.cpp" />
-    <ClCompile Include="scissorbitmap.cpp" />
     <ClCompile Include="Systemclass.cpp" />
     <ClCompile Include="textclass.cpp" />
     <ClCompile Include="textureclass.cpp" />

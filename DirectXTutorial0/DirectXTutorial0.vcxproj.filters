@@ -75,15 +75,6 @@
     <ClInclude Include="gameclass.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="rockbitmap.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="scissorbitmap.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="paperbitmap.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="playerbitmap.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -141,15 +132,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="gameclass.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="rockbitmap.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="scissorbitmap.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="paperbitmap.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="playerbitmap.cpp">

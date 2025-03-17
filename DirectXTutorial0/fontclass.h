@@ -53,6 +53,9 @@ public:
 	int GetSentencePixelLength(char*);
 	int GetFontHeight();
 
+	void SetFontSize(float newSize);  // 폰트 크기 설정 함수
+	float GetFontSize();  // 폰트 크기 가져오기
+
 private:
 	bool LoadFontData(char*);
 	void ReleaseFontData();

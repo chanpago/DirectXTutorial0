@@ -36,6 +36,7 @@ public:
 	int GetIndexCount();
 
 	bool UpdateText(ID3D11DeviceContext*, FontClass*, char*, int, int, float, float, float);
+	
 	XMFLOAT4 GetPixelColor();
 
 private:
