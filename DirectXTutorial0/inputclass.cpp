@@ -26,75 +26,74 @@ bool InputClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int
 {
 	HRESULT result;
 
-
-	// Store the screen size which will be used for positioning the mouse cursor.
+	// 마우스 커서 위치 계산에 사용할 화면 크기를 저장합니다.
 	m_screenWidth = screenWidth;
 	m_screenHeight = screenHeight;
 
-	// Initialize the location of the mouse on the screen.
+	// 마우스의 초기 위치를 설정합니다.
 	m_mouseX = 0;
 	m_mouseY = 0;
 
 	m_playerkeyboardX = 0;
 	m_playerkeyboardY = 0;
 
-	// Initialize the main direct input interface.
+	// DirectInput 메인 인터페이스를 초기화합니다.
 	result = DirectInput8Create(hinstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_directInput, NULL);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	// Initialize the direct input interface for the keyboard.
+	// 키보드를 위한 DirectInput 인터페이스를 초기화합니다.
 	result = m_directInput->CreateDevice(GUID_SysKeyboard, &m_keyboard, NULL);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	// Set the data format.  In this case since it is a keyboard we can use the predefined data format.
+	// 키보드의 데이터 포맷을 설정합니다 (사전 정의된 포맷 사용).
 	result = m_keyboard->SetDataFormat(&c_dfDIKeyboard);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	// Set the cooperative level of the keyboard to not share with other programs.
+	// 키보드의 협동 수준을 설정합니다 (다른 프로그램과 공유하지 않음).
 	result = m_keyboard->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_EXCLUSIVE);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	// Now acquire the keyboard.
+	// 키보드 장치를 획득합니다.
 	result = m_keyboard->Acquire();
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	// Initialize the direct input interface for the mouse.
+	// 마우스를 위한 DirectInput 인터페이스를 초기화합니다.
 	result = m_directInput->CreateDevice(GUID_SysMouse, &m_mouse, NULL);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	// Set the data format for the mouse using the pre-defined mouse data format.
+	// 마우스의 데이터 포맷을 설정합니다 (사전 정의된 포맷 사용).
 	result = m_mouse->SetDataFormat(&c_dfDIMouse);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	// Set the cooperative level of the mouse to share with other programs.
+	// 마우스의 협동 수준을 설정합니다 (다른 프로그램과 공유 가능).
 	result = m_mouse->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	// Acquire the mouse.
+	// 마우스 장치를 획득합니다.
 	result = m_mouse->Acquire();
 	if (FAILED(result))
 	{
@@ -107,7 +106,7 @@ bool InputClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int
 
 void InputClass::Shutdown()
 {
-	// Release the mouse.
+	// 마우스 해제
 	if (m_mouse)
 	{
 		m_mouse->Unacquire();
@@ -115,7 +114,7 @@ void InputClass::Shutdown()
 		m_mouse = 0;
 	}
 
-	// Release the keyboard.
+	// 키보드 해제
 	if (m_keyboard)
 	{
 		m_keyboard->Unacquire();
@@ -123,7 +122,7 @@ void InputClass::Shutdown()
 		m_keyboard = 0;
 	}
 
-	// Release the main interface to direct input.
+	// DirectInput 메인 인터페이스 해제
 	if (m_directInput)
 	{
 		m_directInput->Release();
@@ -138,22 +137,21 @@ bool InputClass::Frame()
 {
 	bool result;
 
-
-	// Read the current state of the keyboard.
+	// 키보드 상태를 읽습니다.
 	result = ReadKeyboard();
 	if (!result)
 	{
 		return false;
 	}
 
-	// Read the current state of the mouse.
+	// 마우스 상태를 읽습니다.
 	result = ReadMouse();
 	if (!result)
 	{
 		return false;
 	}
 
-	// Process the changes in the mouse and keyboard.
+	// 마우스 및 키보드의 입력 변화를 처리합니다.
 	ProcessInput();
 
 	return true;
@@ -164,12 +162,11 @@ bool InputClass::ReadKeyboard()
 {
 	HRESULT result;
 
-
-	// Read the keyboard device.
+	// 키보드 장치 상태를 읽습니다.
 	result = m_keyboard->GetDeviceState(sizeof(m_keyboardState), (LPVOID)&m_keyboardState);
 	if (FAILED(result))
 	{
-		// If the keyboard lost focus or was not acquired then try to get control back.
+		// 입력이 끊긴 경우 다시 획득을 시도합니다.
 		if ((result == DIERR_INPUTLOST) || (result == DIERR_NOTACQUIRED))
 		{
 			m_keyboard->Acquire();
@@ -188,12 +185,11 @@ bool InputClass::ReadMouse()
 {
 	HRESULT result;
 
-
-	// Read the mouse device.
+	// 마우스 장치 상태를 읽습니다.
 	result = m_mouse->GetDeviceState(sizeof(DIMOUSESTATE), (LPVOID)&m_mouseState);
 	if (FAILED(result))
 	{
-		// If the mouse lost focus or was not acquired then try to get control back.
+		// 입력이 끊긴 경우 다시 획득을 시도합니다.
 		if ((result == DIERR_INPUTLOST) || (result == DIERR_NOTACQUIRED))
 		{
 			m_mouse->Acquire();
@@ -210,11 +206,11 @@ bool InputClass::ReadMouse()
 
 void InputClass::ProcessInput()
 {
-	// Update the location of the mouse cursor based on the change of the mouse location during the frame.
+	// 이번 프레임 동안의 마우스 이동 값을 기준으로 커서 위치를 업데이트합니다.
 	m_mouseX += m_mouseState.lX;
 	m_mouseY += m_mouseState.lY;
 
-	// Ensure the mouse location doesn't exceed the screen width or height.
+	// 마우스가 화면 바깥으로 나가지 않도록 제한합니다.
 	if (m_mouseX < 0) { m_mouseX = 0; }
 	if (m_mouseY < 0) { m_mouseY = 0; }
 
@@ -227,7 +223,7 @@ void InputClass::ProcessInput()
 
 bool InputClass::IsEscapePressed()
 {
-	// Do a bitwise and on the keyboard state to check if the escape key is currently being pressed.
+	// ESC 키가 눌렸는지 비트 마스킹으로 확인합니다.
 	if (m_keyboardState[DIK_ESCAPE] & 0x80)
 	{
 		return true;
@@ -244,15 +240,17 @@ void InputClass::GetMouseLocation(int& mouseX, int& mouseY)
 	return;
 }
 
+
 bool InputClass::IsKeyPressed(int key)
 {
+	// 특정 키가 눌렸는지 확인
 	return (m_keyboardState[key] & 0x80);
 }
 
 
 bool InputClass::IsMousePressed()
 {
-	// Check the left mouse button state.
+	// 왼쪽 마우스 버튼이 눌렸는지 확인
 	if (m_mouseState.rgbButtons[0] & 0x80)
 	{
 		return true;

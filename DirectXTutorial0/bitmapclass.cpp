@@ -36,23 +36,22 @@ bool BitmapClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCo
 {
 	bool result;
 
-
-	// Store the screen size.
+	// 화면 크기 저장
 	m_screenWidth = screenWidth;
 	m_screenHeight = screenHeight;
 
-	// Store where the bitmap should be rendered to.
+	// 비트맵을 렌더링할 위치 저장
 	m_renderX = renderX;
 	m_renderY = renderY;
 
-	// Initialize the vertex and index buffer that hold the geometry for the bitmap quad.
+	// 비트맵 사각형(quad)의 정점과 인덱스 버퍼 초기화
 	result = InitializeBuffers(device);
 	if (!result)
 	{
 		return false;
 	}
 
-	// Load the texture for this bitmap.
+	// 비트맵에 사용할 텍스처 로드
 	result = LoadTexture(device, deviceContext, textureFilename);
 	if (!result)
 	{
@@ -65,15 +64,14 @@ bool BitmapClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCo
 
 void BitmapClass::Shutdown()
 {
-	// Release the bitmap texture.
+	// 비트맵 텍스처 해제
 	ReleaseTexture();
 
-	// Release the vertex and index buffers.
+	// 정점 및 인덱스 버퍼 해제
 	ShutdownBuffers();
 
 	return;
 }
-
 
 bool BitmapClass::Render(ID3D11DeviceContext* deviceContext, int positionX, int positionY)
 {
@@ -81,6 +79,7 @@ bool BitmapClass::Render(ID3D11DeviceContext* deviceContext, int positionX, int 
 
 	if (!IsPlayer)
 	{
+		// 플레이어가 아니라면 고정된 위치로 렌더링 위치 업데이트
 		UpdatePosition();
 		result = UpdateBuffers(deviceContext, m_renderX, m_renderY);
 		if (!result)
@@ -90,6 +89,7 @@ bool BitmapClass::Render(ID3D11DeviceContext* deviceContext, int positionX, int 
 	}
 	else
 	{
+		// 플레이어라면 전달받은 좌표로 렌더링 위치 업데이트
 		result = UpdateBuffers(deviceContext, positionX, positionY);
 		if (!result)
 		{
@@ -97,7 +97,7 @@ bool BitmapClass::Render(ID3D11DeviceContext* deviceContext, int positionX, int 
 		}
 	}
 
-	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	// 정점 및 인덱스 버퍼를 그래픽스 파이프라인에 바인딩하여 렌더 준비
 	RenderBuffers(deviceContext);
 
 	return true;
@@ -173,33 +173,32 @@ bool BitmapClass::InitializeBuffers(ID3D11Device* device)
 	HRESULT result;
 	int i;
 
-
-	// Initialize the previous rendering position to negative one.
+	// 이전 렌더링 위치를 -1로 초기화합니다.
 	m_prevPosX = -1;
 	m_prevPosY = -1;
 
-	// Set the number of vertices in the vertex array.
+	// 정점 배열에 들어갈 정점 개수를 설정합니다.
 	m_vertexCount = 6;
 
-	// Set the number of indices in the index array.
+	// 인덱스 배열에 들어갈 인덱스 개수를 설정합니다. (정점 개수와 동일)
 	m_indexCount = m_vertexCount;
 
-	// Create the vertex array.
+	// 정점 배열을 생성합니다.
 	vertices = new VertexType[m_vertexCount];
 
-	// Create the index array.
+	// 인덱스 배열을 생성합니다.
 	indices = new unsigned long[m_indexCount];
 
-	// Initialize vertex array to zeros at first.
+	// 정점 배열을 처음에는 0으로 초기화합니다.
 	memset(vertices, 0, (sizeof(VertexType) * m_vertexCount));
 
-	// Load the index array with data.
+	// 인덱스 배열에 데이터를 채웁니다.
 	for (i = 0; i < m_indexCount; i++)
 	{
 		indices[i] = i;
 	}
 
-	// Set up the description of the dynamic vertex buffer.
+	// 동적 정점 버퍼에 대한 설명을 설정합니다.
 	vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	vertexBufferDesc.ByteWidth = sizeof(VertexType) * m_vertexCount;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -207,19 +206,19 @@ bool BitmapClass::InitializeBuffers(ID3D11Device* device)
 	vertexBufferDesc.MiscFlags = 0;
 	vertexBufferDesc.StructureByteStride = 0;
 
-	// Give the subresource structure a pointer to the vertex data.
+	// 정점 데이터를 가리키는 서브리소스 구조체를 설정합니다.
 	vertexData.pSysMem = vertices;
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
-	// Now finally create the vertex buffer.
+	// 정점 버퍼를 생성합니다.
 	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	// Set up the description of the index buffer.
+	// 인덱스 버퍼에 대한 설명을 설정합니다.
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_indexCount;
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -227,19 +226,19 @@ bool BitmapClass::InitializeBuffers(ID3D11Device* device)
 	indexBufferDesc.MiscFlags = 0;
 	indexBufferDesc.StructureByteStride = 0;
 
-	// Give the subresource structure a pointer to the index data.
+	// 인덱스 데이터를 가리키는 서브리소스 구조체를 설정합니다.
 	indexData.pSysMem = indices;
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
-	// Create the index buffer.
+	// 인덱스 버퍼를 생성합니다.
 	result = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	// Release the arrays now that the vertex and index buffers have been created and loaded.
+	// 정점 및 인덱스 버퍼가 생성되고 데이터가 복사되었으므로, 배열은 해제합니다.
 	delete[] vertices;
 	vertices = 0;
 
@@ -249,17 +248,16 @@ bool BitmapClass::InitializeBuffers(ID3D11Device* device)
 	return true;
 }
 
-
 void BitmapClass::ShutdownBuffers()
 {
-	// Release the index buffer.
+	// 인덱스 버퍼를 해제합니다.
 	if (m_indexBuffer)
 	{
 		m_indexBuffer->Release();
 		m_indexBuffer = 0;
 	}
 
-	// Release the vertex buffer.
+	// 정점 버퍼를 해제합니다.
 	if (m_vertexBuffer)
 	{
 		m_vertexBuffer->Release();
@@ -278,76 +276,75 @@ bool BitmapClass::UpdateBuffers(ID3D11DeviceContext* deviceContent, int position
 	VertexType* dataPtr;
 	HRESULT result;
 
-
-	// If the position we are rendering this bitmap to hasn't changed then don't update the vertex buffer.
+	// 렌더링할 비트맵의 위치가 이전과 같다면 정점 버퍼를 갱신할 필요가 없습니다.
 	if ((m_prevPosX == positionX) && (m_prevPosY == positionY))
 	{
 		return true;
 	}
 
-	// If the rendering location has changed then store the new position and update the vertex buffer.
+	// 렌더링 위치가 변경되었을 경우, 새 위치를 저장하고 정점 버퍼를 갱신합니다.
 	m_prevPosX = positionX;
 	m_prevPosY = positionY;
 
 	m_renderX = positionX;
 	m_renderY = positionY;
 
-	// Create the vertex array.
+	// 정점 배열을 생성합니다.
 	vertices = new VertexType[m_vertexCount];
 
-	// Calculate the screen coordinates of the left side of the bitmap.
+	// 비트맵의 왼쪽 화면 좌표를 계산합니다.
 	left = (float)((m_screenWidth / 2) * -1) + (float)positionX;
 
-	// Calculate the screen coordinates of the right side of the bitmap.
+	// 비트맵의 오른쪽 화면 좌표를 계산합니다.
 	right = left + (float)m_bitmapWidth;
 
-	// Calculate the screen coordinates of the top of the bitmap.
+	// 비트맵의 상단 화면 좌표를 계산합니다.
 	top = (float)(m_screenHeight / 2) - (float)positionY;
 
-	// Calculate the screen coordinates of the bottom of the bitmap.
+	// 비트맵의 하단 화면 좌표를 계산합니다.
 	bottom = top - (float)m_bitmapHeight;
 
-	// Load the vertex array with data.
-	// First triangle.
-	vertices[0].position = XMFLOAT3(left, top, 0.0f);  // Top left.
+	// 정점 배열에 데이터 채우기
+	// 첫 번째 삼각형.
+	vertices[0].position = XMFLOAT3(left, top, 0.0f);  // 좌상단
 	vertices[0].texture = XMFLOAT2(0.0f, 0.0f);
 
-	vertices[1].position = XMFLOAT3(right, bottom, 0.0f);  // Bottom right.
+	vertices[1].position = XMFLOAT3(right, bottom, 0.0f);  // 우하단
 	vertices[1].texture = XMFLOAT2(1.0f, 1.0f);
 
-	vertices[2].position = XMFLOAT3(left, bottom, 0.0f);  // Bottom left.
+	vertices[2].position = XMFLOAT3(left, bottom, 0.0f);  // 좌하단
 	vertices[2].texture = XMFLOAT2(0.0f, 1.0f);
 
-	// Second triangle.
-	vertices[3].position = XMFLOAT3(left, top, 0.0f);  // Top left.
+	// 두 번째 삼각형.
+	vertices[3].position = XMFLOAT3(left, top, 0.0f);  // 좌상단
 	vertices[3].texture = XMFLOAT2(0.0f, 0.0f);
 
-	vertices[4].position = XMFLOAT3(right, top, 0.0f);  // Top right.
+	vertices[4].position = XMFLOAT3(right, top, 0.0f);  // 우상단
 	vertices[4].texture = XMFLOAT2(1.0f, 0.0f);
 
-	vertices[5].position = XMFLOAT3(right, bottom, 0.0f);  // Bottom right.
+	vertices[5].position = XMFLOAT3(right, bottom, 0.0f);  // 우하단
 	vertices[5].texture = XMFLOAT2(1.0f, 1.0f);
 
-	// Lock the vertex buffer.
+	// 정점 버퍼를 잠급니다.
 	result = deviceContent->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	// Get a pointer to the data in the constant buffer.
+	// 정점 버퍼의 데이터를 가리키는 포인터를 가져옵니다.
 	dataPtr = (VertexType*)mappedResource.pData;
 
-	// Copy the data into the vertex buffer.
+	// 정점 버퍼에 데이터를 복사합니다.
 	memcpy(dataPtr, (void*)vertices, (sizeof(VertexType) * m_vertexCount));
 
-	// Unlock the vertex buffer.
+	// 정점 버퍼의 잠금을 해제합니다.
 	deviceContent->Unmap(m_vertexBuffer, 0);
 
-	// Release the pointer reference.
+	// 포인터 참조 해제.
 	dataPtr = 0;
 
-	// Release the vertex array as it is no longer needed.
+	// 정점 배열은 더 이상 필요 없으므로 해제합니다.
 	delete[] vertices;
 	vertices = 0;
 
@@ -360,18 +357,17 @@ void BitmapClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	unsigned int stride;
 	unsigned int offset;
 
-
-	// Set vertex buffer stride and offset.
+	// 정점 버퍼의 스트라이드와 오프셋 설정.
 	stride = sizeof(VertexType);
 	offset = 0;
 
-	// Set the vertex buffer to active in the input assembler so it can be rendered.
+	// 입력 조립기(Input Assembler)에 정점 버퍼를 설정하여 렌더링 가능하도록 활성화.
 	deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
 
-	// Set the index buffer to active in the input assembler so it can be rendered.
+	// 입력 조립기에 인덱스 버퍼를 설정하여 렌더링 가능하도록 활성화.
 	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
+	// 이 정점 버퍼에서 어떤 종류의 도형(프리미티브)을 그릴 것인지 설정. 여기서는 삼각형 리스트.
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	return;
@@ -382,8 +378,7 @@ bool BitmapClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceC
 {
 	bool result;
 
-
-	// Create and initialize the texture object.
+	// 텍스처 객체를 생성하고 초기화.
 	m_Texture = new TextureClass;
 
 	result = m_Texture->Initialize(device, deviceContext, filename);
@@ -392,7 +387,7 @@ bool BitmapClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceC
 		return false;
 	}
 
-	// Store the size in pixels that this bitmap should be rendered at.
+	// 이 비트맵이 렌더링될 픽셀 단위 크기 저장.
 	m_bitmapWidth = 32;
 	m_bitmapHeight = 32;
 
@@ -402,7 +397,7 @@ bool BitmapClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceC
 
 void BitmapClass::ReleaseTexture()
 {
-	// Release the texture object.
+	// 텍스처 객체 해제.
 	if (m_Texture)
 	{
 		m_Texture->Shutdown();
@@ -412,6 +407,7 @@ void BitmapClass::ReleaseTexture()
 
 	return;
 }
+
 
 
 void BitmapClass::SetRenderLocation(int x, int y)

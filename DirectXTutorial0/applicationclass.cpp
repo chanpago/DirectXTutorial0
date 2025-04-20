@@ -43,7 +43,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	srand((unsigned int)time(NULL));
 	int randomnum = rand() % 3;
 
-	// Create and initialize the Direct3D object.
+	//  Direct3D 객체를 생성하고 초기화합니다.
 	m_Direct3D = new D3DClass;
 
 	result = m_Direct3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
@@ -53,14 +53,14 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Create the camera object.
+	// 카메라 객체를 생성합니다.
 	m_Camera = new CameraClass;
 
-	// Set the initial position of the camera.
+	// 카메라의 초기 위치를 설정하고 렌더링합니다.
 	m_Camera->SetPosition(0.0f, 2.0f, -12.0f);
 	m_Camera->Render();
 
-	// Create and initialize the texture shader object.
+	// 텍스처 셰이더 객체를 생성하고 초기화합니다.
 	m_TextureShader = new TextureShaderClass;
 
 	result = m_TextureShader->Initialize(m_Direct3D->GetDevice(), hwnd);
@@ -70,7 +70,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Set the file name of the bitmap file.
+	// 비트맵 파일 이름을 설정합니다.
 	strcpy_s(bitmapFilename, "../Engine/data/cursor.tga");
 	strcpy_s(rockbitmapFilename, "../Engine/data/Rock.tga");
 	strcpy_s(scissorbitmapFilename, "../Engine/data/Scissor.tga");
@@ -86,7 +86,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 	m_GameLogo->SetSize(256, 106);
 
-	// Create and initialize the bitmap object.
+	// 게임 로고 비트맵 생성 및 초기화
 	m_Cursor = new BitmapClass;
 	m_Cursor->SetPlayer();
 	result = m_Cursor->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), screenWidth, screenHeight, bitmapFilename,10,10);
@@ -95,7 +95,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-
+	// 플레이어 캐릭터 비트맵 생성 및 초기화
 	m_PlayerCharacter = new BitmapClass;
 	m_PlayerCharacter->SetPlayer();
 	if (randomnum == 0)
@@ -126,7 +126,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		}
 	}
 	
-	// Create and initialize the font shader object.
+	// 폰트 셰이더 객체 생성 및 초기화
 	m_FontShader = new FontShaderClass;
 
 	result = m_FontShader->Initialize(m_Direct3D->GetDevice(), hwnd);
@@ -136,7 +136,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Create and initialize the font object.
+	// 폰트 객체 생성 및 초기화
 	m_Font = new FontClass;
 
 	result = m_Font->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), 0);
@@ -145,14 +145,14 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Set the initial mouse strings.
+	// 초기 마우스 문자열 설정
 	strcpy_s(mouseString1, "Mouse X: 0");
 	strcpy_s(mouseString2, "Mouse Y: 0");
 	strcpy_s(mouseString3, "Mouse Button: No");
 
 
 
-	// Create and initialize the text objects for the mouse strings.
+	// 마우스 문자열 출력용 텍스트 객체 배열 생성 및 초기화
 	m_MouseStrings = new TextClass[3];
 
 	result = m_MouseStrings[0].Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), screenWidth, screenHeight, 32, m_Font, mouseString1, 10, 10, 1.0f, 1.0f, 1.0f);
@@ -173,12 +173,11 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	// UI 요소 초기화(버튼, 텍스처 등)
 	InitializeUI();
-	//Characters.resize(16);
-	//RenderCharacters(screenWidth,screenHeight);
 
-
-	m_isGameStarted = false; // 게임이 아직 시작되지 않음
+	// 게임 상태 초기화
+	m_isGameStarted = false; 
 	m_elapsedTime = 0.0f;
 
 	// 타이머 텍스트 초기화
@@ -207,8 +206,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void ApplicationClass::Shutdown()
 {
-	// Release the text objects for the mouse strings.
-
+	// 마우스 문자열 텍스트 객체 해제
 	for (auto character : Characters)
 	{
 		if (character)
@@ -218,18 +216,12 @@ void ApplicationClass::Shutdown()
 		}
 	}
 
-	if (m_GameoverTexture) {
-		m_GameoverTexture.Reset();
-	}
+	// UI 텍스처 해제
+	if (m_GameoverTexture) m_GameoverTexture.Reset();
+	if (m_ExitTexture) m_ExitTexture.Reset();
+	if (m_RetryTexture) m_RetryTexture.Reset();
 
-	if (m_ExitTexture) {
-		m_ExitTexture.Reset();
-	}
-
-	if (m_RetryTexture) {
-		m_RetryTexture.Reset();
-	}
-
+	// 클리어 타이머 텍스트 해제
 	if (m_ClearTimerText)
 	{
 		m_ClearTimerText->Shutdown();
@@ -237,7 +229,7 @@ void ApplicationClass::Shutdown()
 		m_ClearTimerText = 0;
 	}
 
-
+	// 타이머 텍스트 및 폰트 해제
 	if (m_TimerText)
 	{
 		m_Font->Shutdown();
@@ -245,7 +237,7 @@ void ApplicationClass::Shutdown()
 		m_TimerText = 0;
 	}
 
-
+	// 마우스 문자열 텍스트 해제
 	if (m_MouseStrings)
 	{
 		m_MouseStrings[0].Shutdown();
@@ -256,7 +248,7 @@ void ApplicationClass::Shutdown()
 		m_MouseStrings = 0;
 	}
 
-	// Release the font object.
+	// 폰트 해제
 	if (m_Font)
 	{
 		m_Font->Shutdown();
@@ -264,7 +256,7 @@ void ApplicationClass::Shutdown()
 		m_Font = 0;
 	}
 
-	// Release the font shader object.
+	// 폰트 셰이더 해제
 	if (m_FontShader)
 	{
 		m_FontShader->Shutdown();
@@ -272,6 +264,7 @@ void ApplicationClass::Shutdown()
 		m_FontShader = 0;
 	}
 
+	// 플레이어 캐릭터 해제
 	if (m_PlayerCharacter)
 	{
 		m_PlayerCharacter->Shutdown();
@@ -279,7 +272,7 @@ void ApplicationClass::Shutdown()
 		m_PlayerCharacter = 0;
 	}
 
-	// Release the bitmap object.
+	// 커서 비트맵 해제
 	if (m_Cursor)
 	{
 		m_Cursor->Shutdown();
@@ -287,6 +280,7 @@ void ApplicationClass::Shutdown()
 		m_Cursor = 0;
 	}
 
+	// 게임 로고 해제
 	if (m_GameLogo)
 	{
 		m_GameLogo->Shutdown();
@@ -294,8 +288,7 @@ void ApplicationClass::Shutdown()
 		m_GameLogo = 0;
 	}
 	
-
-	// Release the texture shader object.
+	// 텍스처 셰이더 해제
 	if (m_TextureShader)
 	{
 		m_TextureShader->Shutdown();
@@ -303,14 +296,14 @@ void ApplicationClass::Shutdown()
 		m_TextureShader = 0;
 	}
 
-	// Release the camera object.
+	// 카메라 해제
 	if (m_Camera)
 	{
 		delete m_Camera;
 		m_Camera = 0;
 	}
 
-	// Release the Direct3D object.
+	// Direct3D 해제
 	if (m_Direct3D)
 	{
 		m_Direct3D->Shutdown();
@@ -327,29 +320,30 @@ bool ApplicationClass::Frame(InputClass* Input)
 	int mouseX, mouseY, keyboardX, keyboardY;
 	bool result, mouseDown;
 
-	// Check if the user pressed escape and wants to exit the application.
+	// ESC 키가 눌렸는지 확인하고 눌렸으면 프로그램 종료
 	if (Input->IsEscapePressed())
 	{
 		return false;
 	}
 
-	// Get the location of the mouse from the input object,
+	// 입력 객체에서 마우스 위치를 가져옵니다.
 	Input->GetMouseLocation(mouseX, mouseY);
 
-	// Check if the mouse has been pressed.
+	// 마우스 클릭 여부 확인
 	mouseDown = Input->IsMousePressed();
 
-	// Update the mouse strings each frame.
+	// 마우스 좌표 문자열 업데이트
 	result = UpdateMouseStrings(mouseX, mouseY, mouseDown);
 	if (!result)
 	{
 		return false;
 	}
 
+	// 로비 상태일 경우 로비 화면 렌더링
 	if (m_Lobby)
 	{
 		DirectX::XMFLOAT2 buttonPos(400, 450);
-		float buttonWidth = 512 * 0.25f;  // 텍스처 크기의 25% (예제 스케일 적용)
+		float buttonWidth = 512 * 0.25f;  
 		float buttonHeight = 271 * 0.25f;
 
 		float left = buttonPos.x - buttonWidth / 2;
@@ -357,8 +351,8 @@ bool ApplicationClass::Frame(InputClass* Input)
 		float top = buttonPos.y - buttonHeight / 2;
 		float bottom = buttonPos.y + buttonHeight / 2;
 
-		if (mouseX >= left && mouseX <= right &&
-			mouseY >= top && mouseY <= bottom && mouseDown)
+		// 마우스 클릭으로 게임 시작
+		if (mouseX >= left && mouseX <= right && mouseY >= top && mouseY <= bottom && mouseDown)
 		{
 			m_Lobby = false;
 			m_Gamestart = true;
@@ -372,6 +366,8 @@ bool ApplicationClass::Frame(InputClass* Input)
 			return false;
 		}
 	}
+
+	// 게임이 시작된 상태라면 게임 로직 처리
 	if (m_Gamestart)
 	{
 		
@@ -387,16 +383,18 @@ bool ApplicationClass::Frame(InputClass* Input)
 		// 화면 경계를 벗어나지 않도록 처리
 		if (playerX < 0) playerX = 0;
 		if (playerY < 0) playerY = 0;
-		if (playerX > 800 - 50) playerX = 800 - 50; // 예제: 화면 너비 800, 캐릭터 크기 50px
-		if (playerY > 600 - 50) playerY = 600 - 50; // 예제: 화면 높이 600
+		if (playerX > 800 - 50) playerX = 800 - 50; // 화면 너비 800, 캐릭터 크기 50px
+		if (playerY > 600 - 50) playerY = 600 - 50; // 화면 높이 600
 
-		// Render the graphics scene.
+		// 게임 플레이 화면 렌더링
 		result = RenderGameStart(playerX, playerY, Input);
 		if (!result)
 		{
 			return false;
 		}
 	}
+
+	// 게임 오버 처리
 	if (m_Gameover)
 	{		
 		
@@ -408,6 +406,7 @@ bool ApplicationClass::Frame(InputClass* Input)
 		m_PlayerCharacter->SetPlayerChange(false);		
 		
 	}
+	// 게임 클리어 처리
 	else if (m_Gameclear)
 	{
 		result = GameClear(Input);
@@ -425,59 +424,44 @@ bool ApplicationClass::RenderLobby(int mouseX, int mouseY)
 	int i;
 	bool result;
 
-	// Clear the buffers to begin the scene.
+	// 화면을 지우고 렌더링 시작
 	m_Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
-	// Get the world, view, and projection matrices from the camera and d3d objects.
+	// 행렬 불러오기
 	m_Direct3D->GetWorldMatrix(worldMatrix);
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_Direct3D->GetOrthoMatrix(orthoMatrix);
 
-
-	// Turn off the Z buffer to begin all 2D rendering.
+	// Z버퍼 끄고 알파 블렌딩 활성화
 	m_Direct3D->TurnZBufferOff();
 	m_Direct3D->EnableAlphaBlending();
 
-	
+	// 로고 렌더링
 	result = RogoRendering(worldMatrix, viewMatrix, orthoMatrix);
-	if (!result)
-	{
-		return false;
-	}
-	
+	if (!result) return false;
 
-	//Render startbutton texture, setting position, scale
+	// 시작 버튼 렌더링
 	result = RenderStartButton();
-	if (!result)
-	{
-		return false;
-	}
-	// Render the mouse text strings using the font shader.
+	if (!result) return false;
+
+	// 마우스 정보 텍스트 렌더링
 	for (i = 0; i < 3; i++)
 	{
 		m_MouseStrings[i].Render(m_Direct3D->GetDeviceContext());
-
-		result = m_FontShader->Render(m_Direct3D->GetDeviceContext(), m_MouseStrings[i].GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix,
-			m_Font->GetTexture(), m_MouseStrings[i].GetPixelColor());
-		if (!result)
-		{
-			return false;
-		}
+		result = m_FontShader->Render(m_Direct3D->GetDeviceContext(), m_MouseStrings[i].GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_Font->GetTexture(), m_MouseStrings[i].GetPixelColor());
+		if (!result) return false;
 	}
-	
+
 	m_Direct3D->DisableAlphaBlending();
 
-	//커서 랜더링
+	// 커서 렌더링
 	result = CursorRendering(true, mouseX, mouseY, worldMatrix, viewMatrix, orthoMatrix);
-	if (!result)
-	{
-		return false;
-	}
+	if (!result) return false;
 
-	// Turn the Z buffer back on now that all 2D rendering has completed.
+	// Z버퍼 다시 켜기
 	m_Direct3D->TurnZBufferOn();
 
-	// Present the rendered scene to the screen.
+	// 렌더링 완료 후 출력
 	m_Direct3D->EndScene();
 
 	return true;
@@ -491,22 +475,22 @@ bool ApplicationClass::RenderGameStart(int keyboardX, int keyboardY, InputClass*
 	bool result;
 	int mouseX, mouseY;
 
+	// 입력 클래스로부터 마우스 좌표를 가져옵니다.
 	Input->GetMouseLocation(mouseX, mouseY);
 
-
-	// Clear the buffers to begin the scene.
+	// 화면을 초기화하고 렌더링을 시작합니다.
 	m_Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
-	// Get the world, view, and projection matrices from the camera and d3d objects.
+	// 카메라와 D3D 객체로부터 행렬들을 얻습니다.
 	m_Direct3D->GetWorldMatrix(worldMatrix);
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_Direct3D->GetOrthoMatrix(orthoMatrix);
 
-
-	// Turn off the Z buffer to begin all 2D rendering.
+	// 2D 렌더링을 위해 Z 버퍼를 끄고 알파 블렌딩을 활성화합니다.
 	m_Direct3D->TurnZBufferOff();
 	m_Direct3D->EnableAlphaBlending();
 
+	// 클리어 조건이 충족되었는지 확인합니다.
 	if (CheckClearGame())
 	{
 		m_Gameclear = true;
@@ -514,63 +498,66 @@ bool ApplicationClass::RenderGameStart(int keyboardX, int keyboardY, InputClass*
 		return true;
 	}
 
+	// 게임 오버가 아니라면 타이머를 업데이트합니다.
 	if (!m_Gameover)
 	{
 		UpdateTimer();
 	}
-	
 
+	// 타이머 텍스트를 렌더링합니다.
 	m_TimerText->Render(m_Direct3D->GetDeviceContext());
 	m_FontShader->Render(m_Direct3D->GetDeviceContext(), m_TimerText->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_Font->GetTexture(), m_TimerText->GetPixelColor());
 
-
+	// 플레이어와 AI 캐릭터 간의 상호작용 처리
 	for (int i = 0; i < 15; i++)
 	{
 		if (m_PlayerCharacter->ResolveInteraction(Characters[i]))
 		{
-			if (m_PlayerCharacter->Gettype() == 0)
+			// 플레이어가 가위바위보 중 무엇인지에 따라 판정
+			if (m_PlayerCharacter->Gettype() == 0) // 바위
 			{
-				if (Characters[i]->Gettype() == 1)
+				if (Characters[i]->Gettype() == 1) // 가위 → 이김
 				{
 					Characters[i]->ChangeTexture(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), rockbitmapFilename);
 					Characters[i]->Settype(0);
 				}
-				if (Characters[i]->Gettype() == 2)
+				if (Characters[i]->Gettype() == 2) // 보 → 짐
 				{
 					m_PlayerCharacter->SetPlayerChange(true);
-				}			
+				}
 			}
-			if (m_PlayerCharacter->Gettype() == 1)
+			else if (m_PlayerCharacter->Gettype() == 1) // 가위
 			{
-				if (Characters[i]->Gettype() == 2)
+				if (Characters[i]->Gettype() == 2) // 보 → 이김
 				{
 					Characters[i]->ChangeTexture(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), scissorbitmapFilename);
 					Characters[i]->Settype(1);
 				}
-				if (Characters[i]->Gettype() == 0)
+				if (Characters[i]->Gettype() == 0) // 바위 → 짐
 				{
 					m_PlayerCharacter->SetPlayerChange(true);
 				}
 			}
-			if (m_PlayerCharacter->Gettype() == 2)
+			else if (m_PlayerCharacter->Gettype() == 2) // 보
 			{
-				if (Characters[i]->Gettype() == 0)
+				if (Characters[i]->Gettype() == 0) // 바위 → 이김
 				{
 					Characters[i]->ChangeTexture(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), paperbitmapFilename);
 					Characters[i]->Settype(2);
 				}
-				if (Characters[i]->Gettype() == 1)
+				if (Characters[i]->Gettype() == 1) // 가위 → 짐
 				{
 					m_PlayerCharacter->SetPlayerChange(true);
 				}
 			}
 		}
-		// 렌더링
+
+		// AI 캐릭터 렌더링
 		Characters[i]->Render(m_Direct3D->GetDeviceContext(), Characters[i]->GetpositionX(), Characters[i]->GetpositionY());
 		m_TextureShader->Render(m_Direct3D->GetDeviceContext(), Characters[i]->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, Characters[i]->GetTexture());
 	}
 
-	// AI 캐릭터 업데이트 및 충돌 처리
+	// AI 캐릭터들 간의 상호작용 처리
 	for (int i = 0; i < 15; i++)
 	{
 		for (int j = 0; j < 15; j++)
@@ -579,7 +566,7 @@ bool ApplicationClass::RenderGameStart(int keyboardX, int keyboardY, InputClass*
 			{
 				if (Characters[i]->ResolveInteraction(Characters[j]))
 				{
-					if (Characters[i]->Gettype() == 0 )
+					if (Characters[i]->Gettype() == 0) // 바위
 					{
 						if (Characters[j]->Gettype() == 1)
 						{
@@ -592,7 +579,7 @@ bool ApplicationClass::RenderGameStart(int keyboardX, int keyboardY, InputClass*
 							Characters[i]->Settype(2);
 						}
 					}
-					else if (Characters[i]->Gettype() == 1)
+					else if (Characters[i]->Gettype() == 1) // 가위
 					{
 						if (Characters[j]->Gettype() == 0)
 						{
@@ -605,7 +592,7 @@ bool ApplicationClass::RenderGameStart(int keyboardX, int keyboardY, InputClass*
 							Characters[j]->Settype(1);
 						}
 					}
-					else if (Characters[i]->Gettype() == 2)
+					else if (Characters[i]->Gettype() == 2) // 보
 					{
 						if (Characters[j]->Gettype() == 0)
 						{
@@ -621,90 +608,63 @@ bool ApplicationClass::RenderGameStart(int keyboardX, int keyboardY, InputClass*
 				}
 			}
 		}
-	
-		// 렌더링
+
+		// AI 캐릭터 렌더링
 		Characters[i]->Render(m_Direct3D->GetDeviceContext(), Characters[i]->GetpositionX(), Characters[i]->GetpositionY());
-		m_TextureShader->Render(m_Direct3D->GetDeviceContext(),Characters[i]->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, Characters[i]->GetTexture());
+		m_TextureShader->Render(m_Direct3D->GetDeviceContext(), Characters[i]->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, Characters[i]->GetTexture());
 	}
 
-	// Put the bitmap vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	// 플레이어 캐릭터 렌더링 준비
 	result = m_PlayerCharacter->Render(m_Direct3D->GetDeviceContext(), keyboardX, keyboardY);
-	if (!result)
-	{
-		return false;
-	}
+	if (!result) return false;
 
-	// Render the bitmap with the texture shader.
+	// 플레이어 캐릭터 텍스처 렌더링
 	result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_PlayerCharacter->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_PlayerCharacter->GetTexture());
-	if (!result)
-	{
-		return false;
-	}
+	if (!result) return false;
 
+	// 플레이어가 상호작용 결과로 상태가 변경되었을 경우 → 게임 오버
 	if (m_PlayerCharacter->GetPlayerChange() == true)
-	{		
+	{
 		m_Gameover = true;
-		m_Keyboardalbe = false;	
+		m_Keyboardalbe = false;
 	}
 
-	// Turn the Z buffer back on now that all 2D rendering has completed.
+	// 모든 2D 렌더링이 완료되었으므로 Z 버퍼 다시 활성화
 	m_Direct3D->TurnZBufferOn();
 
-	// Present the rendered scene to the screen.
+	// 렌더링된 화면을 출력
 	m_Direct3D->EndScene();
 
 	return true;
 }
+
 
 bool ApplicationClass::UpdateMouseStrings(int mouseX, int mouseY, bool mouseDown)
 {
 	char tempString[16], finalString[32];
 	bool result;
 
-	// Convert the mouse X integer to string format.
+	// 마우스 X 좌표를 문자열로 변환하여 렌더링 텍스트 생성
 	sprintf_s(tempString, "%d", mouseX);
-
-	// Setup the mouse X string.
 	strcpy_s(finalString, "Mouse X: ");
 	strcat_s(finalString, tempString);
-
-	// Update the sentence vertex buffer with the new string information.
 	result = m_MouseStrings[0].UpdateText(m_Direct3D->GetDeviceContext(), m_Font, finalString, 10, 10, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
+	if (!result) return false;
 
-	// Convert the mouse Y integer to string format.
+	// 마우스 Y 좌표를 문자열로 변환하여 렌더링 텍스트 생성
 	sprintf_s(tempString, "%d", mouseY);
-
-	// Setup the mouse Y string.
 	strcpy_s(finalString, "Mouse Y: ");
 	strcat_s(finalString, tempString);
-
-	// Update the sentence vertex buffer with the new string information.
 	result = m_MouseStrings[1].UpdateText(m_Direct3D->GetDeviceContext(), m_Font, finalString, 10, 35, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
+	if (!result) return false;
 
-	// Setup the mouse button string.
+	// 마우스 버튼 클릭 상태 업데이트
 	if (mouseDown)
-	{
 		strcpy_s(finalString, "Mouse Button: Yes");
-	}
 	else
-	{
 		strcpy_s(finalString, "Mouse Button: No");
-	}
-
-	// Update the sentence vertex buffer with the new string information.
 	result = m_MouseStrings[2].UpdateText(m_Direct3D->GetDeviceContext(), m_Font, finalString, 10, 60, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
+	if (!result) return false;
 
 	return true;
 }
@@ -733,83 +693,77 @@ bool ApplicationClass::GameOver(InputClass* Input)
 	bool result, mouseDown;
 	int mouseX, mouseY;
 
-	// Clear the buffers to begin the scene.
+	// 장면을 시작하기 위해 버퍼를 지웁니다.
 	m_Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
-	// Get the world, view, and projection matrices from the camera and d3d objects.
+	// 카메라와 D3D 객체로부터 월드, 뷰, 직교 투영 행렬을 가져옵니다.
 	m_Direct3D->GetWorldMatrix(worldMatrix);
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_Direct3D->GetOrthoMatrix(orthoMatrix);
 
-
-	// Turn off the Z buffer to begin all 2D rendering.
+	// 2D 렌더링을 시작하기 위해 Z 버퍼를 끄고 알파 블렌딩을 켭니다.
 	m_Direct3D->TurnZBufferOff();
 	m_Direct3D->EnableAlphaBlending();
 
-	// Check if the mouse has been pressed.
+	// 마우스 클릭 여부를 확인합니다.
 	mouseDown = Input->IsMousePressed();
 	Input->GetMouseLocation(mouseX, mouseY);
 
+	// 게임 오버 상태에서는 캐릭터들을 멈춥니다.
 	for (int i = 0; i < 15; i++)
 	{
 		Characters[i]->Setspeed(0, 0);
 	}
 
+	// "Game Over" 텍스처 렌더링
 	if (m_spriteBatch && m_GameoverTexture)
 	{
 		m_spriteBatch->Begin(DirectX::SpriteSortMode_Deferred);
 
-		// 버튼의 위치
+		// 버튼 위치 설정
 		DirectX::XMFLOAT2 position(400, 300);
-		DirectX::XMFLOAT2 scale(0.5f, 0.5f);  // 크기 조정 (예: 25%)
+		DirectX::XMFLOAT2 scale(0.5f, 0.5f);  // 텍스처를 절반 크기로 렌더링
 
-		// 텍스처 크기 가져오기
+		// 텍스처 크기 정보 추출
 		D3D11_TEXTURE2D_DESC textureDesc;
 		Microsoft::WRL::ComPtr<ID3D11Resource> resource;
 		m_GameoverTexture->GetResource(resource.GetAddressOf());
-
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> texture;
 		resource.As(&texture);
 		texture->GetDesc(&textureDesc);
 
-		// 원점 (중앙)
+		// 원점을 중앙으로 설정
 		DirectX::XMFLOAT2 origin(textureDesc.Width / 2.0f, textureDesc.Height / 2.0f);
 
-		// 중앙 정렬
-		m_spriteBatch->Draw(m_GameoverTexture.Get(), position, nullptr, DirectX::Colors::White, 0.0f,
-			origin, scale);
+		// 게임오버 텍스처 렌더링
+		m_spriteBatch->Draw(m_GameoverTexture.Get(), position, nullptr, DirectX::Colors::White, 0.0f, origin, scale);
 
 		m_spriteBatch->End();
 	}
+
+	// "EXIT" 버튼 렌더링 및 클릭 처리
 	if (m_spriteBatch && m_ExitTexture)
 	{
 		m_spriteBatch->Begin(DirectX::SpriteSortMode_Deferred);
 
-		// 버튼의 위치
 		DirectX::XMFLOAT2 position(200, 500);
-		DirectX::XMFLOAT2 scale(0.3f, 0.3f);  // 크기 조정 (예: 25%)
+		DirectX::XMFLOAT2 scale(0.3f, 0.3f);  // 크기 조정
 
-		// 텍스처 크기 가져오기
 		D3D11_TEXTURE2D_DESC textureDesc;
 		Microsoft::WRL::ComPtr<ID3D11Resource> resource;
 		m_ExitTexture->GetResource(resource.GetAddressOf());
-
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> texture;
 		resource.As(&texture);
 		texture->GetDesc(&textureDesc);
 
-		// 원점 (중앙)
 		DirectX::XMFLOAT2 origin(textureDesc.Width / 2.0f, textureDesc.Height / 2.0f);
 
-		// 중앙 정렬
-		m_spriteBatch->Draw(m_ExitTexture.Get(), position, nullptr, DirectX::Colors::White, 0.0f,
-			origin, scale);
+		m_spriteBatch->Draw(m_ExitTexture.Get(), position, nullptr, DirectX::Colors::White, 0.0f, origin, scale);
 
 		m_spriteBatch->End();
 
-
-
-		float buttonWidth = 600 * 0.3f;  // 텍스처 크기의 30% (예제 스케일 적용)
+		// 마우스 클릭 범위 감지
+		float buttonWidth = 600 * 0.3f;
 		float buttonHeight = 160 * 0.3f;
 
 		float left = position.x - buttonWidth / 2;
@@ -820,6 +774,7 @@ bool ApplicationClass::GameOver(InputClass* Input)
 		if (mouseX >= left && mouseX <= right &&
 			mouseY >= top && mouseY <= bottom && mouseDown)
 		{
+			// "EXIT" 클릭 시 초기 상태로 리셋
 			m_Lobby = true;
 			m_Gamestart = false;
 			m_Keyboardalbe = true;
@@ -828,35 +783,30 @@ bool ApplicationClass::GameOver(InputClass* Input)
 
 			return true;
 		}
-
 	}
+
+	// "RETRY" 버튼 렌더링 및 클릭 처리
 	if (m_spriteBatch && m_RetryTexture)
 	{
 		m_spriteBatch->Begin(DirectX::SpriteSortMode_Deferred);
 
-		// 버튼의 위치
 		DirectX::XMFLOAT2 position(600, 500);
-		DirectX::XMFLOAT2 scale(0.3f, 0.3f);  // 크기 조정 (예: 25%)
+		DirectX::XMFLOAT2 scale(0.3f, 0.3f);
 
-		// 텍스처 크기 가져오기
 		D3D11_TEXTURE2D_DESC textureDesc;
 		Microsoft::WRL::ComPtr<ID3D11Resource> resource;
 		m_RetryTexture->GetResource(resource.GetAddressOf());
-
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> texture;
 		resource.As(&texture);
 		texture->GetDesc(&textureDesc);
 
-		// 원점 (중앙)
 		DirectX::XMFLOAT2 origin(textureDesc.Width / 2.0f, textureDesc.Height / 2.0f);
 
-		// 중앙 정렬
-		m_spriteBatch->Draw(m_RetryTexture.Get(), position, nullptr, DirectX::Colors::White, 0.0f,
-			origin, scale);
+		m_spriteBatch->Draw(m_RetryTexture.Get(), position, nullptr, DirectX::Colors::White, 0.0f, origin, scale);
 
 		m_spriteBatch->End();
 
-		float buttonWidth = 600 * 0.3f;  // 텍스처 크기의 30% (예제 스케일 적용)
+		float buttonWidth = 600 * 0.3f;
 		float buttonHeight = 500 * 0.3f;
 
 		float left = position.x - buttonWidth / 2;
@@ -867,6 +817,7 @@ bool ApplicationClass::GameOver(InputClass* Input)
 		if (mouseX >= left && mouseX <= right &&
 			mouseY >= top && mouseY <= bottom && mouseDown)
 		{
+			// "RETRY" 클릭 시 게임 재시작
 			m_startTime = std::chrono::steady_clock::now();
 			m_Lobby = false;
 			m_Gamestart = true;
@@ -878,25 +829,23 @@ bool ApplicationClass::GameOver(InputClass* Input)
 		}
 	}
 
-
-	//커서 랜더링
+	// 커서 렌더링
 	result = CursorRendering(true, mouseX, mouseY, worldMatrix, viewMatrix, orthoMatrix);
 	if (!result)
 	{
 		return false;
 	}
 
-
-	// Turn the Z buffer back on now that all 2D rendering has completed.
+	// 2D 렌더링이 완료되었으므로 Z 버퍼 다시 활성화
 	m_Direct3D->TurnZBufferOn();
 
-	// Present the rendered scene to the screen.
+	// 최종 장면을 화면에 출력
 	m_Direct3D->EndScene();
 
-	// ui창 띄우기 + 시간 종료
-	//종료 프로세스 구현
+	// UI 창이 표시되고 종료 상태가 됨
 	return true;
 }
+
 
 bool ApplicationClass::GameClear(InputClass* Input)
 {
@@ -904,93 +853,86 @@ bool ApplicationClass::GameClear(InputClass* Input)
 	bool result, mouseDown;
 	int mouseX, mouseY;
 
-	// Clear the buffers to begin the scene.
+	// 장면을 시작하기 위해 버퍼를 클리어합니다.
 	m_Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
-	// Get the world, view, and projection matrices from the camera and d3d objects.
+	// 카메라 및 D3D 객체로부터 월드, 뷰, 직교 행렬을 가져옵니다.
 	m_Direct3D->GetWorldMatrix(worldMatrix);
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_Direct3D->GetOrthoMatrix(orthoMatrix);
 
-
-	// Turn off the Z buffer to begin all 2D rendering.
+	// 2D 렌더링을 위해 Z버퍼를 끄고 알파 블렌딩을 활성화합니다.
 	m_Direct3D->TurnZBufferOff();
 	m_Direct3D->EnableAlphaBlending();
 
-	// Check if the mouse has been pressed.
+	// 마우스 입력을 확인합니다.
 	mouseDown = Input->IsMousePressed();
 	Input->GetMouseLocation(mouseX, mouseY);
 
+	// 모든 캐릭터의 속도를 0으로 설정하여 정지시킵니다.
 	for (int i = 0; i < 15; i++)
 	{
 		Characters[i]->Setspeed(0, 0);
 	}
 
+	// "게임 클리어" 텍스처를 화면 중앙에 렌더링
 	if (m_spriteBatch && m_GameclearTexture)
 	{
 		m_spriteBatch->Begin(DirectX::SpriteSortMode_Deferred);
 
-		// 버튼의 위치
+		// 위치와 크기 설정
 		DirectX::XMFLOAT2 position(400, 300);
-		DirectX::XMFLOAT2 scale(0.3f, 0.3f);  // 크기 조정 (예: 25%)
+		DirectX::XMFLOAT2 scale(0.3f, 0.3f);  // 30% 크기로 조정
 
 		// 텍스처 크기 가져오기
 		D3D11_TEXTURE2D_DESC textureDesc;
 		Microsoft::WRL::ComPtr<ID3D11Resource> resource;
 		m_GameclearTexture->GetResource(resource.GetAddressOf());
-
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> texture;
 		resource.As(&texture);
 		texture->GetDesc(&textureDesc);
 
-		// 원점 (중앙)
+		// 중앙 기준점 설정
 		DirectX::XMFLOAT2 origin(textureDesc.Width / 2.0f, textureDesc.Height / 2.0f);
 
-		// 중앙 정렬
-		m_spriteBatch->Draw(m_GameclearTexture.Get(), position, nullptr, DirectX::Colors::White, 0.0f,
-			origin, scale);
-
+		// 텍스처 출력
+		m_spriteBatch->Draw(m_GameclearTexture.Get(), position, nullptr, DirectX::Colors::White, 0.0f, origin, scale);
 		m_spriteBatch->End();
 	}
+
+	// "EXIT" 버튼 처리
 	if (m_spriteBatch && m_ExitTexture)
 	{
 		m_spriteBatch->Begin(DirectX::SpriteSortMode_Deferred);
 
-		// 버튼의 위치
 		DirectX::XMFLOAT2 position(200, 500);
-		DirectX::XMFLOAT2 scale(0.3f, 0.3f);  // 크기 조정 (예: 25%)
+		DirectX::XMFLOAT2 scale(0.3f, 0.3f);
 
-		// 텍스처 크기 가져오기
 		D3D11_TEXTURE2D_DESC textureDesc;
 		Microsoft::WRL::ComPtr<ID3D11Resource> resource;
 		m_ExitTexture->GetResource(resource.GetAddressOf());
-
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> texture;
 		resource.As(&texture);
 		texture->GetDesc(&textureDesc);
 
-		// 원점 (중앙)
 		DirectX::XMFLOAT2 origin(textureDesc.Width / 2.0f, textureDesc.Height / 2.0f);
 
-		// 중앙 정렬
-		m_spriteBatch->Draw(m_ExitTexture.Get(), position, nullptr, DirectX::Colors::White, 0.0f,
-			origin, scale);
-
+		m_spriteBatch->Draw(m_ExitTexture.Get(), position, nullptr, DirectX::Colors::White, 0.0f, origin, scale);
 		m_spriteBatch->End();
 
-
-
-		float buttonWidth = 600 * 0.3f;  // 텍스처 크기의 30% (예제 스케일 적용)
+		// 클릭 영역 계산
+		float buttonWidth = 600 * 0.3f;
 		float buttonHeight = 160 * 0.3f;
-
 		float left = position.x - buttonWidth / 2;
 		float right = position.x + buttonWidth / 2;
 		float top = position.y - buttonHeight / 2;
 		float bottom = position.y + buttonHeight / 2;
 
+		// 클릭 감지
 		if (mouseX >= left && mouseX <= right &&
 			mouseY >= top && mouseY <= bottom && mouseDown)
 		{
+			// 로비로 돌아감
 			m_Lobby = true;
 			m_Gamestart = false;
 			m_Keyboardalbe = true;
@@ -998,37 +940,30 @@ bool ApplicationClass::GameClear(InputClass* Input)
 			RenderCharacters(800, 600);
 			return true;
 		}
-
 	}
+
+	// "RETRY" 버튼 처리
 	if (m_spriteBatch && m_RetryTexture)
 	{
 		m_spriteBatch->Begin(DirectX::SpriteSortMode_Deferred);
 
-		// 버튼의 위치
 		DirectX::XMFLOAT2 position(600, 500);
-		DirectX::XMFLOAT2 scale(0.3f, 0.3f);  // 크기 조정 (예: 25%)
+		DirectX::XMFLOAT2 scale(0.3f, 0.3f);
 
-		// 텍스처 크기 가져오기
 		D3D11_TEXTURE2D_DESC textureDesc;
 		Microsoft::WRL::ComPtr<ID3D11Resource> resource;
 		m_RetryTexture->GetResource(resource.GetAddressOf());
-
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> texture;
 		resource.As(&texture);
 		texture->GetDesc(&textureDesc);
 
-		// 원점 (중앙)
 		DirectX::XMFLOAT2 origin(textureDesc.Width / 2.0f, textureDesc.Height / 2.0f);
 
-		// 중앙 정렬
-		m_spriteBatch->Draw(m_RetryTexture.Get(), position, nullptr, DirectX::Colors::White, 0.0f,
-			origin, scale);
-
+		m_spriteBatch->Draw(m_RetryTexture.Get(), position, nullptr, DirectX::Colors::White, 0.0f, origin, scale);
 		m_spriteBatch->End();
 
-		float buttonWidth = 600 * 0.3f;  // 텍스처 크기의 30% (예제 스케일 적용)
+		float buttonWidth = 600 * 0.3f;
 		float buttonHeight = 500 * 0.3f;
-
 		float left = position.x - buttonWidth / 2;
 		float right = position.x + buttonWidth / 2;
 		float top = position.y - buttonHeight / 2;
@@ -1037,6 +972,7 @@ bool ApplicationClass::GameClear(InputClass* Input)
 		if (mouseX >= left && mouseX <= right &&
 			mouseY >= top && mouseY <= bottom && mouseDown)
 		{
+			// 게임 재시작
 			m_startTime = std::chrono::steady_clock::now();
 			m_Lobby = false;
 			m_Gamestart = true;
@@ -1047,44 +983,41 @@ bool ApplicationClass::GameClear(InputClass* Input)
 		}
 	}
 
+	// 클리어 시간 텍스트 업데이트 및 렌더링
 	m_Font->SetFontSize(50.0f);
-
-	
-	// 타이머 텍스트 초기화
-	//char initialTimeString[32];
 	sprintf_s(initialTimeString, "Time: %.2f", m_elapsedTime);
 	result = m_ClearTimerText->UpdateText(m_Direct3D->GetDeviceContext(), m_Font, initialTimeString, 370, 200, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
 	}
-
 	m_ClearTimerText->Render(m_Direct3D->GetDeviceContext());
 	m_FontShader->Render(m_Direct3D->GetDeviceContext(), m_ClearTimerText->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_Font->GetTexture(), m_ClearTimerText->GetPixelColor());
-	
 
-	//커서 랜더링
+	// 커서 렌더링
 	result = CursorRendering(true, mouseX, mouseY, worldMatrix, viewMatrix, orthoMatrix);
 	if (!result)
 	{
 		return false;
 	}
 
-	// Turn the Z buffer back on now that all 2D rendering has completed.
+	// 2D 렌더링 완료 후 Z버퍼 다시 켜기
 	m_Direct3D->TurnZBufferOn();
 
-	// Present the rendered scene to the screen.
+	// 최종 장면을 화면에 출력
 	m_Direct3D->EndScene();
 
-	//종료 프로세스 구현
+	// 종료 처리 완료
 	return true;
 }
+
 
 bool ApplicationClass::CursorRendering(bool m_showCursor, int mouseX, int mouseY, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX orthoMatrix)
 {
 	bool result;
 
-	if (m_showCursor)  // 커서가 보이도록 설정되었을 때만 렌더링
+	// 커서가 보이도록 설정되었을 때만 렌더링
+	if (m_showCursor)  
 	{
 		result = m_Cursor->Render(m_Direct3D->GetDeviceContext(), mouseX, mouseY);
 		if (!result)

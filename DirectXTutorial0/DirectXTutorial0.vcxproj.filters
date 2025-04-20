@@ -39,9 +39,6 @@
     <ClInclude Include="d3dclass.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="modelclass.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Colorshaderclass.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -72,9 +69,6 @@
     <ClInclude Include="textclass.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="gameclass.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="playerbitmap.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -96,9 +90,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="d3dclass.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="modelclass.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="colorshaderclass.cpp">
@@ -129,9 +120,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="textclass.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="gameclass.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="playerbitmap.cpp">
