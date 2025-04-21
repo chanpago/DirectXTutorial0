@@ -63,3 +63,8 @@
 ---
 
 ## 🖼 게임 스크린샷
+
+![게임 시작](./screenshots/2.PNG)
+![게임 시작](./screenshots/3.PNG)
+![게임 시작](./screenshots/4.PNG)
+![게임 시작](./screenshots/5.PNG)
