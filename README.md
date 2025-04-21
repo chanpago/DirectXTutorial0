@@ -81,4 +81,4 @@
 
 아래는 본 프로젝트의 주요 클래스 간 관계를 표현한 계층 구조입니다.  
 
-![클래스 아키텍처](./screenshots/class_architecture.png)
+![클래스 아키텍처](./Screenshots/At.png)
