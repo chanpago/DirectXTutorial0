@@ -83,10 +83,32 @@
 
 ![클래스 아키텍처](./Screenshots/At.png)
 
+
+본 프로젝트는 클래스를 명확히 분리하여 기능별 책임을 분담하는 구조로 설계되었습니다.
+
+```text
+WinMain
+   ↓
+SystemClass
+   ├─ ApplicationClass     : 그래픽/입력 관리의 중심. 렌더링 및 업데이트 호출
+   └─ InputClass           : 키보드 입력 감지 및 상태 저장
+
+ApplicationClass 내부 구성
+   ├─ D3DClass             : Direct3D 초기화 및 렌더링 제어
+   ├─ CameraClass          : 카메라 설정 및 뷰 행렬 생성
+   ├─ BitmapClass          : 2D 오브젝트 렌더링 (캐릭터, 커서 등)
+   │   └─ TextureClass     : PNG 텍스처 로딩 및 DirectX에 바인딩
+   ├─ FontShaderClass      : 텍스트 전용 셰이더
+   ├─ FontClass            : 폰트 메트릭 및 폰트 텍스처 관리
+   │   └─ TextureClass     : 폰트용 텍스처 로딩 처리
+   └─ TextClass            : 출력할 문자열 관리 및 렌더링
+
+```
+
 ---
 
 ## 📎 티스토리 블로그
 
-더 자세한 개발 기록과 기술적 분석은 아래 블로그 포스트에서 확인할 수 있습니다
+더 자세한 개발 기록과 기술적 분석은 아래 블로그 포스트에서 확인할 수 있습니다.
 
 👉 [https://fn000.tistory.com/](https://fn000.tistory.com/)
