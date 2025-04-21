@@ -12,7 +12,7 @@
 4. [게임 스크린샷](#게임-스크린샷)
 5. [기술 스택](#기술-스택)
 6. [아키텍처](#아키텍처)
-7. [티스토리 블로그](#티스토리-블로그)
+7. [티스토리 블로그, itch.io 퍼블리싱](#티스토리-블로그)
 
 
 
@@ -107,8 +107,9 @@ ApplicationClass 내부 구성
 
 ---
 
-## 📎 티스토리 블로그
+## 📎 티스토리 블로그 & itch.io 퍼블리싱
 
 더 자세한 개발 기록과 기술적 분석은 아래 블로그 포스트에서 확인할 수 있습니다.
 
 👉 [https://fn000.tistory.com/](https://fn000.tistory.com/)
+👉 [https://chanpago.itch.io/rsp](https://chanpago.itch.io/rsp)
