@@ -70,7 +70,7 @@
 | 🖥 플랫폼      | **Windows 10 (x64)** - WinAPI를 활용한 창 생성 및 메시지 루프 구성 |
 | 🧰 개발 도구  | **Visual Studio 2022** - C++ 컴파일, 디버깅, 디렉터리 설정 |
 | 🎨 텍스처 로딩 | **WICTextureLoader** (from DirectXTK) - PNG 파일 로딩 |
-| 🖋 폰트 출력   | **SpriteFont / FontClass** - DirectXTK 기반 텍스트 출력 |
+| 🖋 폰트 출력   | **FontClass – .txt와 .tga 기반** 자체 구현 폰트 렌더링 시스템 |
 | 🔁 루프 & 타이머 | **GameTimer / Elapsed Time 계산** - 시간 기반 애니메이션 구현 |
 | ⌨ 입력 처리   | **WinAPI 기반 키보드 입력 처리 (GetAsyncKeyState)** |
 | 🔧 기타 유틸   | **SpriteBatch** - 2D UI 요소 및 오브젝트 배치 |
@@ -97,10 +97,10 @@ ApplicationClass 내부 구성
    ├─ D3DClass             : Direct3D 초기화 및 렌더링 제어
    ├─ CameraClass          : 카메라 설정 및 뷰 행렬 생성
    ├─ BitmapClass          : 2D 오브젝트 렌더링 (캐릭터, 커서 등)
-   │   └─ TextureClass     : PNG 텍스처 로딩 및 DirectX에 바인딩
+   │   └─ TextureClass     : TGA 텍스처 로딩 및 DirectX에 바인딩
    ├─ FontShaderClass      : 텍스트 전용 셰이더
    ├─ FontClass            : 폰트 메트릭 및 폰트 텍스처 관리
-   │   └─ TextureClass     : 폰트용 텍스처 로딩 처리
+   │   └─ TextureClass     : TGA 텍스처 로딩 및 DirectX에 바인딩
    └─ TextClass            : 출력할 문자열 관리 및 렌더링
 
 ```
