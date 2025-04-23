@@ -53,10 +53,11 @@ public:
 	void SetPlayer();
 	void Settype(int);
 	void Setposition(int, int);
-	void Setspeed(int, int);
+	void Setspeed(float, float);
 	void Setprespeed(int, int);
 	void SetPlayerChange(bool);
 	void SetSize(int, int);
+	void SetTexture(TextureClass* texture);
 
 	void UpdatePosition();
 
@@ -73,8 +74,9 @@ private:
 	void ShutdownBuffers();
 	bool UpdateBuffers(ID3D11DeviceContext*, int, int);
 	void RenderBuffers(ID3D11DeviceContext*);
-
+	
 	bool LoadTexture(ID3D11Device*, ID3D11DeviceContext*, char*);
+
 	void ReleaseTexture();
 	 // 위치 업데이트 함수 추가
 

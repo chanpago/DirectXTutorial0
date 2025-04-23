@@ -182,6 +182,7 @@
     <ClInclude Include="Systemclass.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="textclass.h" />
+    <ClInclude Include="texturecache.h" />
     <ClInclude Include="textureclass.h" />
     <ClInclude Include="textureshaderclass.h" />
   </ItemGroup>
@@ -201,6 +202,7 @@
     <ClCompile Include="playerbitmap.cpp" />
     <ClCompile Include="Systemclass.cpp" />
     <ClCompile Include="textclass.cpp" />
+    <ClCompile Include="texturecache.cpp" />
     <ClCompile Include="textureclass.cpp" />
     <ClCompile Include="textureshaderclass.cpp" />
   </ItemGroup>

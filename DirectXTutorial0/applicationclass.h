@@ -14,7 +14,8 @@
 #include "cameraclass.h"
 #include "textureshaderclass.h"
 #include "bitmapclass.h"
-
+#include "textureclass.h"
+#include "texturecache.h"
 #include "playerbitmap.h"
 #include "fontshaderclass.h"
 #include "fontclass.h"
@@ -67,6 +68,7 @@ private:
 	bool CursorRendering(bool, int, int, XMMATRIX, XMMATRIX, XMMATRIX);
 	bool RogoRendering(XMMATRIX, XMMATRIX, XMMATRIX);
 	void RenderCharacters(int,int);
+	void SetCharacters(int, int);
 	void ClearCharacters();
 	void ResetUI();
 
@@ -85,6 +87,10 @@ private:
 	FontClass* m_Font;
 	TextClass* m_TextString1, * m_TextString2;
 	TextClass* m_MouseStrings;
+
+	TextureClass* rockTex;
+	TextureClass* scissorTex;
+	TextureClass* paperTex;
 
 	BitmapClass* m_PlayerCharacter;
 

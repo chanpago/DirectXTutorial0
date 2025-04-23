@@ -50,12 +50,19 @@ bool BitmapClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCo
 	{
 		return false;
 	}
-
-	// 비트맵에 사용할 텍스처 로드
-	result = LoadTexture(device, deviceContext, textureFilename);
-	if (!result)
+	
+	if (textureFilename != nullptr)
 	{
-		return false;
+		// 비트맵에 사용할 텍스처 로드
+		result = LoadTexture(device, deviceContext, textureFilename);
+		if (!result)
+		{
+			return false;
+		}
+	}
+	if (textureFilename == nullptr)
+	{
+		return true;
 	}
 
 	return true;
@@ -81,6 +88,7 @@ bool BitmapClass::Render(ID3D11DeviceContext* deviceContext, int positionX, int 
 	{
 		// 플레이어가 아니라면 고정된 위치로 렌더링 위치 업데이트
 		UpdatePosition();
+		OutputDebugStringA("WARNING: IsPlayer == false 상태!\n");
 		result = UpdateBuffers(deviceContext, m_renderX, m_renderY);
 		if (!result)
 		{
@@ -373,6 +381,15 @@ void BitmapClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	return;
 }
 
+void BitmapClass::SetTexture(TextureClass* texture)
+{
+	if (!texture)
+	{
+		OutputDebugStringA("SetTexture: nullptr 전달됨!\n");
+	}
+	m_Texture = texture;  // 소유권 없음! 해제 X
+}
+
 
 bool BitmapClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename)
 {
@@ -401,7 +418,7 @@ void BitmapClass::ReleaseTexture()
 	if (m_Texture)
 	{
 		m_Texture->Shutdown();
-		delete m_Texture;
+		//delete m_Texture;
 		m_Texture = 0;
 	}
 
@@ -438,7 +455,7 @@ void BitmapClass::Setposition(int newpositionX, int newpositionY)
 	m_renderY = newpositionY;
 }
 
-void BitmapClass::Setspeed(int newspeedX, int newspeedY)
+void BitmapClass::Setspeed(float newspeedX, float newspeedY)
 {
 	m_speedX = newspeedX;
 	m_speedY = newspeedY;
@@ -465,8 +482,14 @@ void BitmapClass::SetSize(int width, int height)
 // 위치 업데이트 함수
 void BitmapClass::UpdatePosition()
 {
+
 	m_renderX += m_speedX;
 	m_renderY += m_speedY;
+
+	// 디버깅용 속도 출력
+	char buffer[128];
+	sprintf_s(buffer, "[UpdatePosition] SpeedX: %.2f, SpeedY: %.2f\n", m_speedX, m_speedY);
+	OutputDebugStringA(buffer);
 
 	if (m_renderX < 0)
 	{

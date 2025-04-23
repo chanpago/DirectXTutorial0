@@ -200,6 +200,12 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	rockTex = TextureCache::GetTexture(rockbitmapFilename, m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext());
+	scissorTex = TextureCache::GetTexture(scissorbitmapFilename, m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext());
+	paperTex = TextureCache::GetTexture(paperbitmapFilename, m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext());
+
+	RenderCharacters(800, 600);
+
 	return true;
 }
 
@@ -215,6 +221,8 @@ void ApplicationClass::Shutdown()
 			delete character;      // 메모리 해제
 		}
 	}
+
+	TextureCache::ShutdownAll();
 
 	// UI 텍스처 해제
 	if (m_GameoverTexture) m_GameoverTexture.Reset();
@@ -358,7 +366,7 @@ bool ApplicationClass::Frame(InputClass* Input)
 			m_Gamestart = true;
 			m_Keyboardalbe = true;
 			m_startTime = std::chrono::steady_clock::now();
-			RenderCharacters(800, 600);
+			SetCharacters(800, 600);
 		}
 		result = RenderLobby(mouseX, mouseY);
 		if (!result)
@@ -371,7 +379,7 @@ bool ApplicationClass::Frame(InputClass* Input)
 	if (m_Gamestart)
 	{
 		
-		int moveSpeed = 5;  // 이동 속도
+		const int moveSpeed = 5;  // 이동 속도
 
 		if (m_Keyboardalbe)
 		{
@@ -518,7 +526,7 @@ bool ApplicationClass::RenderGameStart(int keyboardX, int keyboardY, InputClass*
 			{
 				if (Characters[i]->Gettype() == 1) // 가위 → 이김
 				{
-					Characters[i]->ChangeTexture(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), rockbitmapFilename);
+					Characters[i]->SetTexture(rockTex);
 					Characters[i]->Settype(0);
 				}
 				if (Characters[i]->Gettype() == 2) // 보 → 짐
@@ -530,7 +538,7 @@ bool ApplicationClass::RenderGameStart(int keyboardX, int keyboardY, InputClass*
 			{
 				if (Characters[i]->Gettype() == 2) // 보 → 이김
 				{
-					Characters[i]->ChangeTexture(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), scissorbitmapFilename);
+					Characters[i]->SetTexture(scissorTex);
 					Characters[i]->Settype(1);
 				}
 				if (Characters[i]->Gettype() == 0) // 바위 → 짐
@@ -542,7 +550,7 @@ bool ApplicationClass::RenderGameStart(int keyboardX, int keyboardY, InputClass*
 			{
 				if (Characters[i]->Gettype() == 0) // 바위 → 이김
 				{
-					Characters[i]->ChangeTexture(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), paperbitmapFilename);
+					Characters[i]->SetTexture(paperTex);
 					Characters[i]->Settype(2);
 				}
 				if (Characters[i]->Gettype() == 1) // 가위 → 짐
@@ -560,7 +568,7 @@ bool ApplicationClass::RenderGameStart(int keyboardX, int keyboardY, InputClass*
 	// AI 캐릭터들 간의 상호작용 처리
 	for (int i = 0; i < 15; i++)
 	{
-		for (int j = 0; j < 15; j++)
+		for (int j = i + 1; j < 15; j++)
 		{
 			if (i != j)
 			{
@@ -568,40 +576,40 @@ bool ApplicationClass::RenderGameStart(int keyboardX, int keyboardY, InputClass*
 				{
 					if (Characters[i]->Gettype() == 0) // 바위
 					{
-						if (Characters[j]->Gettype() == 1)
+						if (Characters[j]->Gettype() == 1) //가위
 						{
-							Characters[j]->ChangeTexture(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), rockbitmapFilename);
+							Characters[j]->SetTexture(rockTex);
 							Characters[j]->Settype(0);
 						}
-						if (Characters[j]->Gettype() == 2)
+						if (Characters[j]->Gettype() == 2)//보
 						{
-							Characters[i]->ChangeTexture(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), paperbitmapFilename);
+							Characters[i]->SetTexture(paperTex);
 							Characters[i]->Settype(2);
 						}
 					}
 					else if (Characters[i]->Gettype() == 1) // 가위
 					{
-						if (Characters[j]->Gettype() == 0)
+						if (Characters[j]->Gettype() == 0) // 바위
 						{
-							Characters[i]->ChangeTexture(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), rockbitmapFilename);
+							Characters[i]->SetTexture(rockTex);
 							Characters[i]->Settype(0);
 						}
-						if (Characters[j]->Gettype() == 2)
+						if (Characters[j]->Gettype() == 2) // 보
 						{
-							Characters[j]->ChangeTexture(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), scissorbitmapFilename);
+							Characters[j]->SetTexture(scissorTex);
 							Characters[j]->Settype(1);
 						}
 					}
 					else if (Characters[i]->Gettype() == 2) // 보
 					{
-						if (Characters[j]->Gettype() == 0)
+						if (Characters[j]->Gettype() == 0)//바위
 						{
-							Characters[j]->ChangeTexture(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), paperbitmapFilename);
+							Characters[j]->SetTexture(paperTex);
 							Characters[j]->Settype(2);
 						}
-						if (Characters[j]->Gettype() == 1)
+						if (Characters[j]->Gettype() == 1) // 가위
 						{
-							Characters[i]->ChangeTexture(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), scissorbitmapFilename);
+							Characters[i]->SetTexture(scissorTex);
 							Characters[i]->Settype(1);
 						}
 					}
@@ -712,7 +720,7 @@ bool ApplicationClass::GameOver(InputClass* Input)
 	// 게임 오버 상태에서는 캐릭터들을 멈춥니다.
 	for (int i = 0; i < 15; i++)
 	{
-		Characters[i]->Setspeed(0, 0);
+		Characters[i]->Setspeed(0.0f, 0.0f);
 	}
 
 	// "Game Over" 텍스처 렌더링
@@ -779,7 +787,7 @@ bool ApplicationClass::GameOver(InputClass* Input)
 			m_Gamestart = false;
 			m_Keyboardalbe = true;
 			m_Gameover = false;
-			RenderCharacters(800, 600);
+			SetCharacters(800, 600);
 
 			return true;
 		}
@@ -823,7 +831,7 @@ bool ApplicationClass::GameOver(InputClass* Input)
 			m_Gamestart = true;
 			m_Gameover = false;
 			m_Keyboardalbe = true;
-			RenderCharacters(800, 600);
+			SetCharacters(800, 600);
 
 			return true;
 		}
@@ -872,7 +880,7 @@ bool ApplicationClass::GameClear(InputClass* Input)
 	// 모든 캐릭터의 속도를 0으로 설정하여 정지시킵니다.
 	for (int i = 0; i < 15; i++)
 	{
-		Characters[i]->Setspeed(0, 0);
+		Characters[i]->Setspeed(0.0f, 0.0f);
 	}
 
 	// "게임 클리어" 텍스처를 화면 중앙에 렌더링
@@ -937,7 +945,7 @@ bool ApplicationClass::GameClear(InputClass* Input)
 			m_Gamestart = false;
 			m_Keyboardalbe = true;
 			m_Gameclear = false;
-			RenderCharacters(800, 600);
+			SetCharacters(800, 600);
 			return true;
 		}
 	}
@@ -978,7 +986,7 @@ bool ApplicationClass::GameClear(InputClass* Input)
 			m_Gamestart = true;
 			m_Gameclear = false;
 			m_Keyboardalbe = true;
-			RenderCharacters(800, 600);
+			SetCharacters(800, 600);
 			return true;
 		}
 	}
@@ -1056,7 +1064,7 @@ bool ApplicationClass::RogoRendering(XMMATRIX worldMatrix, XMMATRIX viewMatrix, 
 
 void ApplicationClass::RenderCharacters(int screenWidth, int screenHeight)
 {
-	ClearCharacters();
+	//ClearCharacters();
 	for (int i = 0; i < 5; i++)
 	{
 		int randomX = rand() % screenWidth;
@@ -1064,6 +1072,7 @@ void ApplicationClass::RenderCharacters(int screenWidth, int screenHeight)
 
 		BitmapClass* newCharacter = new BitmapClass();
 		newCharacter->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), screenWidth, screenHeight, rockbitmapFilename, randomX, randomY);
+		//newCharacter->SetTexture(rockTex); // 캐시에서 공유
 		newCharacter->Settype(0);
 		newCharacter->SetNotPlayer();
 		Characters.push_back(newCharacter); // 그룹 i에 추가
@@ -1076,6 +1085,7 @@ void ApplicationClass::RenderCharacters(int screenWidth, int screenHeight)
 
 		BitmapClass* newCharacter = new BitmapClass();
 		newCharacter->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), screenWidth, screenHeight, scissorbitmapFilename, randomX, randomY);
+		//newCharacter->SetTexture(scissorTex); // 캐시에서 공유
 		newCharacter->Settype(1);
 		newCharacter->SetNotPlayer();
 		Characters.push_back(newCharacter); // 그룹 i에 추가
@@ -1087,10 +1097,71 @@ void ApplicationClass::RenderCharacters(int screenWidth, int screenHeight)
 		int randomY = rand() % screenHeight;
 
 		BitmapClass* newCharacter = new BitmapClass();
-		newCharacter->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), screenWidth, screenHeight, paperbitmapFilename, randomX, randomY);
+		newCharacter->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), screenWidth, screenHeight, paperbitmapFilename, randomX, randomY); // textureFilename은 무시
+		//newCharacter->SetTexture(paperTex); // 캐시에서 공유
 		newCharacter->Settype(2);
 		newCharacter->SetNotPlayer();
 		Characters.push_back(newCharacter); // 그룹 i에 추가
+	}
+}
+
+void ApplicationClass::SetCharacters(int screenWidth, int screenHeight)
+{
+	OutputDebugStringA("SetCharacters 호출됨\n");
+	char buffer[128];
+
+	for (int i = 0; i < 5; i++)
+	{
+		int randomX = rand() % screenWidth;
+		int randomY = rand() % screenHeight;
+
+		// 이 부분에 텍스처 교체하는 코드
+		Characters[i]->SetTexture(rockTex);
+		Characters[i]->Settype(0);
+		Characters[i]->Setposition(randomX,randomY);
+		Characters[i]->SetNotPlayer();		
+		float dx = ((rand() % 2001) / 1000.0f) - 1.0f;
+		float dy = ((rand() % 2001) / 1000.0f) - 1.0f;
+		Characters[i]->Setspeed(dx, dy);
+
+		sprintf_s(buffer, "[SetCharacters] Character %d (Rock) Speed: %.2f, %.2f\n", i, dx, dy);
+		OutputDebugStringA(buffer);
+	}
+
+	for (int i = 5; i < 10; i++)
+	{
+		int randomX = rand() % screenWidth;
+		int randomY = rand() % screenHeight;
+
+		// 이 부분에 텍스처 교체하는 코드
+		Characters[i]->SetTexture(scissorTex);
+		Characters[i]->Settype(1);
+		Characters[i]->Setposition(randomX, randomY);
+		Characters[i]->SetNotPlayer();
+		float dx = ((rand() % 2001) / 1000.0f) - 1.0f;
+		float dy = ((rand() % 2001) / 1000.0f) - 1.0f;
+		Characters[i]->Setspeed(dx, dy);
+
+		sprintf_s(buffer, "[SetCharacters] Character %d (Scissor) Speed: %.2f, %.2f\n", i, dx, dy);
+		OutputDebugStringA(buffer);
+	}
+
+	for (int i = 10; i < 15; i++)
+	{
+		int randomX = rand() % screenWidth;
+		int randomY = rand() % screenHeight;
+
+		// 이 부분에 텍스처 교체하는 코드
+		Characters[i]->SetTexture(paperTex);
+		Characters[i]->Settype(2);
+		Characters[i]->Setposition(randomX, randomY);
+		Characters[i]->SetNotPlayer();
+		float dx = ((rand() % 2001) / 1000.0f) - 1.0f;
+		float dy = ((rand() % 2001) / 1000.0f) - 1.0f;
+		Characters[i]->Setspeed(dx, dy);
+
+		sprintf_s(buffer, "[SetCharacters] Character %d (Paper) Speed: %.2f, %.2f\n", i, dx, dy);
+		OutputDebugStringA(buffer);
 	}
 }
 
@@ -1102,7 +1173,7 @@ void ApplicationClass::ClearCharacters()
 		if (character)
 		{
 			character->Shutdown(); // BitmapClass의 리소스 정리
-			delete character;      // 메모리 해제
+			//delete character;      // 메모리 해제
 		}
 	}
 
