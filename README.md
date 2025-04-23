@@ -141,7 +141,7 @@ ApplicationClass 내부 구성
 ### 🖼 게임 스크린샷
 
 ## 게임플레이 링크
-![플레이 동영상](https://youtu.be/Os9WlwOfmNk?si=K51z_a_d-AoBoPP-)
+![플레이 동영상](https://youtu.be/Os9WlwOfmNk)
 
 ## 스크린샷
 ![게임 시작](./Screenshots/2.PNG)
