@@ -110,6 +110,17 @@ ApplicationClass 내부 구성
 
 ## 📌 트러블슈팅 & 성능 개선
 
+### ✅ 1. 텍스처 로딩 최적화 (캐싱 적용)
+- 문제: `BitmapClass::Initialize`와 `ChangeTexture`에서 매번 TGA 텍스처 파일을 디스크에서 불러오는 구조로 되어 있어 불필요하게 I/O 연산이 많고 CPU 사용량이 높았습니다
+- 개선: `TextureCache` 클래스를 별도로 구현하여 한 번 로드된 텍스처는 메모리에 보관하고 이후는 포인터만 재사용하도록 변경했습니다.
+- 효과: `TextureClass::LoadTarga32Bit()` 호출 빈도가 대폭 감소하여 중복 텍스처 로딩 제거와 디스크 I/O 감소하여  **CPU 부하가 감소**하였습니다.
+
+
+
+### ✅ 2. 캐릭터 객체 재사용
+- 문제: 게임 시작 또는 게임 재시작 시 매번 `BitmapClass` 객체를 new로 생성, 해제하여 텍스처를 새로 로딩해 성능 저하가 있었습니다.
+- 개선: `RenderCharacters` 대신 `SetCharacters`를 만들어 기존 객체의 이미 로드된 텍스처 포인터 교체하는 방식으로 최적화를 이루어 냈습니다.
+- 효과: **프레임 드롭 감소**, **상호작용 시 CPU/GPU 부하 완화**
 
 
 ---
@@ -117,7 +128,7 @@ ApplicationClass 내부 구성
 
 ## 📎 티스토리 블로그 & itch.io 퍼블리싱
 
-더 자세한 개발 기록과 기술적 분석은 아래 블로그 포스트에서 확인할 수 있습니다.
+더 자세한 DirectX11 공부 기록과 퍼블리싱은 아래 블로그 포스트에서 확인할 수 있습니다.
 
 👉 [https://fn000.tistory.com/](https://fn000.tistory.com/)
 👉 [https://chanpago.itch.io/rsp](https://chanpago.itch.io/rsp)
