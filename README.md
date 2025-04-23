@@ -89,6 +89,7 @@ ApplicationClass 내부 구성
    ├─ D3DClass             : Direct3D 초기화 및 렌더링 제어
    ├─ CameraClass          : 카메라 설정 및 뷰 행렬 생성
    ├─ BitmapClass          : 2D 오브젝트 렌더링 (캐릭터, 커서 등)
+   │   └─ TextureCacheClass: TGA 텍스처 캐싱
    │   └─ TextureClass     : TGA 텍스처 로딩 및 DirectX에 바인딩
    ├─ FontShaderClass      : 텍스트 전용 셰이더
    ├─ FontClass            : 폰트 메트릭 및 폰트 텍스처 관리
