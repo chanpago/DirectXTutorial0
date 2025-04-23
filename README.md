@@ -122,7 +122,8 @@ ApplicationClass 내부 구성
 - 개선: `RenderCharacters` 대신 `SetCharacters`를 만들어 기존 객체의 이미 로드된 텍스처 포인터 교체하는 방식으로 최적화를 이루어 냈습니다.
 - 효과: **프레임 드롭 감소**, **상호작용 시 CPU/GPU 부하 완화**
 
-
+![성능개선전](./Screenshots/pa_a1.PNG)
+![성능개선전](./Screenshots/pa_a2.PNG)
 ---
 
 
