@@ -25,7 +25,6 @@ TextureClass::~TextureClass()
 bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename)
 {
 	bool result;
-	D3D11_TEXTURE2D_DESC textureDesc;
 	HRESULT hResult;
 	unsigned int rowPitch;
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -87,6 +86,77 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	return true;
 }
 
+bool TextureClass::UpdateTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename)
+{
+	bool result;
+	unsigned int rowPitch;
+
+	// 새로운 TGA 이미지 로드
+	result = LoadTarga32Bit(filename);
+	if (!result)
+	{
+		return false;
+	}
+
+	// 기존 텍스처의 크기 확인
+	D3D11_TEXTURE2D_DESC existingDesc;
+	m_texture->GetDesc(&existingDesc);
+
+	// 텍스처 크기가 다르면 새로 생성해야 함
+	if (existingDesc.Width != m_width || existingDesc.Height != m_height)
+	{
+		// 기존 텍스처 삭제
+		if (m_texture) { m_texture->Release(); m_texture = nullptr; }
+		if (m_textureView) { m_textureView->Release(); m_textureView = nullptr; }
+
+		// 새로운 텍스처 생성
+		D3D11_TEXTURE2D_DESC textureDesc = {};
+		textureDesc.Width = m_width;
+		textureDesc.Height = m_height;
+		textureDesc.MipLevels = 1;  // MipMaps를 직접 생성하지 않고 단일 레벨 사용
+		textureDesc.ArraySize = 1;
+		textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		textureDesc.SampleDesc.Count = 1;
+		textureDesc.Usage = D3D11_USAGE_DEFAULT;
+		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		textureDesc.CPUAccessFlags = 0;
+
+		HRESULT hr = device->CreateTexture2D(&textureDesc, NULL, &m_texture);
+		if (FAILED(hr))
+		{
+			return false;
+		}
+
+		// Shader Resource View 생성
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = textureDesc.Format;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+		srvDesc.Texture2D.MipLevels = 1;
+
+		hr = device->CreateShaderResourceView(m_texture, &srvDesc, &m_textureView);
+		if (FAILED(hr))
+		{
+			return false;
+		}
+	}
+
+	// rowPitch 설정 (한 줄의 데이터 크기)
+	rowPitch = m_width * 4;
+
+	// 기존 텍스처에 새로운 데이터 업데이트
+	deviceContext->UpdateSubresource(m_texture, 0, NULL, m_targaData, rowPitch, 0);
+
+	// MipMap 재생성 (필요한 경우)
+	deviceContext->GenerateMips(m_textureView);
+
+	// 메모리 해제
+	delete[] m_targaData;
+	m_targaData = nullptr;
+
+	return true;
+}
+
 
 void TextureClass::Shutdown()
 {
@@ -119,6 +189,8 @@ ID3D11ShaderResourceView* TextureClass::GetTexture()
 {
 	return m_textureView;
 }
+
+
 
 
 bool TextureClass::LoadTarga32Bit(char* filename)

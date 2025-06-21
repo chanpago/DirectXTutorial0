@@ -27,14 +27,14 @@ bool SystemClass::Initialize()
 	bool result;
 
 
-	// Initialize the width and height of the screen to zero before sending the variables into the function.
+	// 변수를 함수로 보내기 전에 화면의 너비와 높이를 0으로 초기화합니다.
 	screenWidth = 0;
 	screenHeight = 0;
 
-	// Initialize the windows api.
+	// Windows API를 초기화합니다.
 	InitializeWindows(screenWidth, screenHeight);
 
-	// Create and initialize the input object.  This object will be used to handle reading the keyboard input from the user.
+	// 입력 객체를 생성하고 초기화합니다. 이 객체는 사용자로부터 키보드 입력을 읽는 데 사용됩니다.
 	m_Input = new InputClass;
 
 	result = m_Input->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
@@ -43,7 +43,7 @@ bool SystemClass::Initialize()
 		return false;
 	}
 
-	// Create and initialize the application class object.  This object will handle rendering all the graphics for this application.
+	// 애플리케이션 클래스 객체를 생성하고 초기화합니다. 이 객체는 이 애플리케이션의 모든 그래픽 렌더링을 처리합니다.
 	m_Application = new ApplicationClass;
 
 	result = m_Application->Initialize(screenWidth, screenHeight, m_hwnd);
@@ -58,7 +58,7 @@ bool SystemClass::Initialize()
 
 void SystemClass::Shutdown()
 {
-	// Release the application class object.
+	// 애플리케이션 클래스 객체 해제
 	if (m_Application)
 	{
 		m_Application->Shutdown();
@@ -66,14 +66,14 @@ void SystemClass::Shutdown()
 		m_Application = 0;
 	}
 
-	// Release the input class object.
+	// 입력 클래스 객체 해제
 	if (m_Input)
 	{
 		delete m_Input;
 		m_Input = 0;
 	}
 
-	// Shutdown the window.
+	// 윈도우 종료
 	ShutdownWindows();
 
 	return;
@@ -86,35 +86,34 @@ void SystemClass::Run()
 	bool done, result;
 
 
-	// Initialize the message structure.
+	// 메시지 구조체 초기화
 	ZeroMemory(&msg, sizeof(MSG));
 
-	// Loop until there is a quit message from the window or the user.
+	// 윈도우 종료 메시지가 올 때까지 루프 실행
 	done = false;
 	while (!done)
 	{
-		// Handle the windows messages.
+		// 윈도우 메시지 처리
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
 
-		// If windows signals to end the application then exit out.
+		// 종료 메시지라면 루프 탈출
 		if (msg.message == WM_QUIT)
 		{
 			done = true;
 		}
 		else
 		{
-			// Otherwise do the frame processing.
+			// 프레임 처리
 			result = Frame();
 			if (!result)
 			{
 				done = true;
 			}
 		}
-
 	}
 
 	return;
@@ -126,14 +125,14 @@ bool SystemClass::Frame()
 	bool result;
 
 
-	// Do the input frame processing.
+	// 입력 프레임 처리
 	result = m_Input->Frame();
 	if (!result)
 	{
 		return false;
 	}
 
-	// Do the frame processing for the application class object.
+	// 애플리케이션 프레임 처리
 	result = m_Application->Frame(m_Input);
 	if (!result)
 	{
@@ -157,16 +156,16 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 	int posX, posY;
 
 
-	//외부 포인터를 이 객체로 설정합니다.
+	// 외부 포인터를 이 객체로 설정합니다.
 	ApplicationHandle = this;
 
-	// 이 어플리케이션의 인스턴스를 가져옵니다.
+	// 이 애플리케이션의 인스턴스를 가져옵니다.
 	m_hinstance = GetModuleHandle(NULL);
 
-	// 어플리케이션의 이름을 설정합니다.
+	// 애플리케이션 이름 설정
 	m_applicationName = L"Engine";
 
-	// 윈도우 클래스를 기본 설정으로 맞춥니다.
+	// 윈도우 클래스를 기본 설정으로 초기화
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 	wc.lpfnWndProc = WndProc;
 	wc.cbClsExtra = 0;
@@ -180,17 +179,17 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 	wc.lpszClassName = m_applicationName;
 	wc.cbSize = sizeof(WNDCLASSEX);
 
-	// 윈도우 클래스를 등록합니다.
+	// 윈도우 클래스 등록
 	RegisterClassEx(&wc);
 
-	//모니터 화면의 해상도를 알아옵니다.
+	// 화면 해상도 가져오기
 	screenWidth = GetSystemMetrics(SM_CXSCREEN);
 	screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
-	// 풀스크린 모드 변수의 값에 따라 화면 설정을 합니다.
+	// 풀스크린 여부에 따라 설정
 	if (FULL_SCREEN)
 	{
-		// 만약 풀스크린 모드라면 화면 크기를 데스크톱 크기에 맞추고 색상을 32bit로 합니다.
+		// 풀스크린일 경우 전체 화면에 맞게 설정하고 32비트 색상 사용
 		memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
 		dmScreenSettings.dmSize = sizeof(dmScreenSettings);
 		dmScreenSettings.dmPelsWidth = (unsigned long)screenWidth;
@@ -198,45 +197,45 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 		dmScreenSettings.dmBitsPerPel = 32;
 		dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
-		// 풀스크린에 맞는 디스플레이 설정을 합니다.
+		// 디스플레이 설정 변경
 		ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN);
 
-		// 윈도우의 위치를 화면의 왼쪽 위로 맞춥니다.
+		// 화면 좌측 상단에 윈도우 위치 설정
 		posX = posY = 0;
 	}
 	else
 	{
-		// 윈도우 모드라면 800x600의 크기를 가지게 합니다.
+		// 윈도우 모드일 경우 해상도 800x600으로 설정
 		screenWidth = 800;
 		screenHeight = 600;
 
-		//창을 모니터의 중앙에 오도록 합니다.
+		// 화면 중앙에 윈도우 배치
 		posX = (GetSystemMetrics(SM_CXSCREEN) - screenWidth) / 2;
 		posY = (GetSystemMetrics(SM_CYSCREEN) - screenHeight) / 2;
 	}
 
-	// 설정한 것을 가지고 창을 만들고 그 핸들을 가져옵니다.
+	// 창 생성 및 핸들 가져오기
 	m_hwnd = CreateWindowEx(WS_EX_APPWINDOW, m_applicationName, m_applicationName,
 		WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,
 		posX, posY, screenWidth, screenHeight, NULL, NULL, m_hinstance, NULL);
 
-	// 윈도우를 화면에 표시하고 포커스를 줍니다.
+	// 윈도우 표시 및 포커스 설정
 	ShowWindow(m_hwnd, SW_SHOW);
 	SetForegroundWindow(m_hwnd);
 	SetFocus(m_hwnd);
 
-	// 마우스 커서를 표시하지 않습니다.
+	// 마우스 커서 숨기기
 	ShowCursor(false);
 
 
 	RECT rect;
 
-	// 현재 창의 크기를 가져오기 (검은색 화면 영역)
+	// 현재 창의 클라이언트 영역 가져오기
 	GetClientRect(m_hwnd, &rect);
 
-	// 윈도우의 위치를 기준으로 클라이언트 좌표 변환
-	POINT ul = { rect.left, rect.top };   // Upper Left
-	POINT lr = { rect.right, rect.bottom }; // Lower Right
+	// 클라이언트 좌표를 화면 좌표로 변환
+	POINT ul = { rect.left, rect.top };    // 좌상단
+	POINT lr = { rect.right, rect.bottom }; // 우하단
 
 	ClientToScreen(m_hwnd, &ul);
 	ClientToScreen(m_hwnd, &lr);
@@ -246,9 +245,8 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 	rect.right = lr.x;
 	rect.bottom = lr.y;
 
-	// 마우스 커서를 이 영역 안으로 제한
+	// 마우스 커서를 클라이언트 영역 내로 제한
 	ClipCursor(&rect);
-
 
 	return;
 }
@@ -256,24 +254,24 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 
 void SystemClass::ShutdownWindows()
 {
-	// Show the mouse cursor.
+	// 마우스 커서 표시
 	ShowCursor(true);
 
-	// Fix the display settings if leaving full screen mode.
+	// 풀스크린 모드였다면 디스플레이 설정 복원
 	if (FULL_SCREEN)
 	{
 		ChangeDisplaySettings(NULL, 0);
 	}
 
-	// Remove the window.
+	// 윈도우 제거
 	DestroyWindow(m_hwnd);
 	m_hwnd = NULL;
 
-	// Remove the application instance.
+	// 애플리케이션 인스턴스 해제
 	UnregisterClass(m_applicationName, m_hinstance);
 	m_hinstance = NULL;
 
-	// Release the pointer to this class.
+	// 애플리케이션 핸들 해제
 	ApplicationHandle = NULL;
 
 	return;
@@ -284,21 +282,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 {
 	switch (umessage)
 	{
-		// Check if the window is being destroyed.
+		// 윈도우가 파괴될 때
 	case WM_DESTROY:
 	{
 		PostQuitMessage(0);
 		return 0;
 	}
 
-	// Check if the window is being closed.
+	// 윈도우가 닫힐 때
 	case WM_CLOSE:
 	{
 		PostQuitMessage(0);
 		return 0;
 	}
 
-	// All other messages pass to the message handler in the system class.
+	// 그 외 메시지는 SystemClass로 전달
 	default:
 	{
 		return ApplicationHandle->MessageHandler(hwnd, umessage, wparam, lparam);

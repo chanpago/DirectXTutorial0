@@ -74,21 +74,25 @@
     <ExecutablePath>$(SolutionDir)Inc;$(ExecutablePath)</ExecutablePath>
     <LibraryPath>$(SolutionDir)lib\DirectXTK\x64\Debug;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)Inc;$(IncludePath)</IncludePath>
+    <OutDir>.\x64\Debug</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ExecutablePath>$(SolutionDir)Inc;$(ExecutablePath)</ExecutablePath>
-    <LibraryPath>$(SolutionDir)lib\DirectXTK\x64\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\DirectXTK\x64\Release;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)Inc;$(IncludePath)</IncludePath>
+    <OutDir>.\x64\Release</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ExecutablePath>$(SolutionDir)Inc;$(ExecutablePath)</ExecutablePath>
     <LibraryPath>$(SolutionDir)lib\DirectXTK\x64\Debug;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)Inc;$(IncludePath)</IncludePath>
+    <OutDir>.\x64\Debug</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ExecutablePath>$(SolutionDir)Inc;$(ExecutablePath)</ExecutablePath>
-    <LibraryPath>$(SolutionDir)lib\DirectXTK\x64\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\DirectXTK\x64\Release;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)Inc;$(IncludePath)</IncludePath>
+    <OutDir>.\x64\Release</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -96,10 +100,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib\DirectXTK\x64\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>User32.lib;d3d11.lib;d3dcompiler.lib;dxgi.lib;windowscodecs.lib;ole32.lib;runtimeobject.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -110,12 +117,16 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib\DirectXTK\x64\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/VERBOSE %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -124,10 +135,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib\DirectXTK\x64\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>User32.lib;d3d11.lib;d3dcompiler.lib;dxgi.lib;windowscodecs.lib;ole32.lib;runtimeobject.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -138,12 +152,16 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib\DirectXTK\x64\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/VERBOSE %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -156,19 +174,15 @@
     <ClInclude Include="fontclass.h" />
     <ClInclude Include="fontshaderclass.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="gameclass.h" />
     <ClInclude Include="inputclass.h" />
     <ClInclude Include="lightclass.h" />
     <ClInclude Include="lightshaderclass.h" />
-    <ClInclude Include="modelclass.h" />
-    <ClInclude Include="paperbitmap.h" />
     <ClInclude Include="playerbitmap.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="rockbitmap.h" />
-    <ClInclude Include="scissorbitmap.h" />
     <ClInclude Include="Systemclass.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="textclass.h" />
+    <ClInclude Include="texturecache.h" />
     <ClInclude Include="textureclass.h" />
     <ClInclude Include="textureshaderclass.h" />
   </ItemGroup>
@@ -181,18 +195,14 @@
     <ClCompile Include="DirectXTutorial0.cpp" />
     <ClCompile Include="fontclass.cpp" />
     <ClCompile Include="fontshaderclass.cpp" />
-    <ClCompile Include="gameclass.cpp" />
     <ClCompile Include="inputclass.cpp" />
     <ClCompile Include="lightclass.cpp" />
     <ClCompile Include="lightshaderclass.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="modelclass.cpp" />
-    <ClCompile Include="paperbitmap.cpp" />
     <ClCompile Include="playerbitmap.cpp" />
-    <ClCompile Include="rockbitmap.cpp" />
-    <ClCompile Include="scissorbitmap.cpp" />
     <ClCompile Include="Systemclass.cpp" />
     <ClCompile Include="textclass.cpp" />
+    <ClCompile Include="texturecache.cpp" />
     <ClCompile Include="textureclass.cpp" />
     <ClCompile Include="textureshaderclass.cpp" />
   </ItemGroup>

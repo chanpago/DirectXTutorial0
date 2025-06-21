@@ -40,10 +40,14 @@ public:
 	int GetWidth();
 	int GetHeight();
 
+
+	bool UpdateTexture(ID3D11Device*, ID3D11DeviceContext*, char*);
 private:
 	bool LoadTarga32Bit(char*);
 
 private:
+	D3D11_TEXTURE2D_DESC textureDesc;
+
 	unsigned char* m_targaData;
 	ID3D11Texture2D* m_texture;
 	ID3D11ShaderResourceView* m_textureView;
